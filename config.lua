@@ -18,7 +18,6 @@ Config.SantaClausRandoms = 50
 
 
 -- DEER MISSION
-Config.PlayerCanUseDeerAgain = true
 Config.DeerZones = {
     {
         DeerCount = 5,
@@ -56,11 +55,9 @@ Config.DeerZones = {
 }
 
 -- GIFT JOB
-Config.PlayerMustEndedDeer = true
 Config.GiftJob = {
     {
         EnableChristmasDoorAnim = true,
-        AnimPedRandom = 50, 
         GiftItemName = "christmas_giftbox",
         GiftEntryRandom = 50,
 
