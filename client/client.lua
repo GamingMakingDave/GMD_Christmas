@@ -7,6 +7,7 @@ PlayerInSearch = false
 PlayerSearching = {}
 local PedCoords = {}
 local EnteredRadius = false
+local showHelp = true
 
 AddEventHandler('onResourceStart', function(resource)
     if GetCurrentResourceName() == resource then 
@@ -77,126 +78,40 @@ end)
 
 CreateThread(function()
     while true do
-            Wait(0)
-            EnteredRadius = false
-            local dist = #(GetEntityCoords(PlayerPedId()) - Config.SantaClausPosition)
+        Wait(0)
+        EnteredRadius = false
+        local dist = #(GetEntityCoords(PlayerPedId()) - Config.SantaClausPosition)
 
-            if dist <= 3.0 then
-                EnteredRadius = true
-                if not PlayerInSearch then
+        if dist <= 3.0 then
+            EnteredRadius = true
+
+            if not PlayerInSearch then
+                if showHelp then
                     ESX.ShowHelpNotification((Config.Language[Config.Local]['santa_helptext']))
-                    if IsControlJustReleased(0, 38) then
-                        ESX.TriggerServerCallback('GMD_Christmas:HasMissionFinished', function(check)
-                            if check then
-                                OpenFullMenu()
-                            else
-                                OpenDeerMenu()
-                            end
-                        end)
-                        -- Wait(500)
-                        -- showsubtitle("Mir sind meine Rentiere entlaufen und mit euren geschenken abgehauen!!", 1000)
-                        -- Wait(1500)
-                        -- showsubtitle("Kannst du sie suchen helfen?", 1000)
-                        -- Wait(1500)
-                        -- showsubtitle("Ansonsten war es das mit dem Weihnachtsfest und ihr müsst ohne Geschenke auskommen", 1000)
-                        -- Wait(1500)
-                        -- showsubtitle("Hier hast du von mir ein Zuckerstangen Laufstock, nutze ihn wenn du eines meiner", 1000)
-                        -- Wait(1500)
-                        -- showsubtitle("Rehntiere siehst ich komme dann...", 1000)
-                        -- Wait(1500)
-                        -- TriggerServerEvent('GMD_Christmas:giveXmasSearchItem')
-                    end
+                end
+
+                if IsControlJustReleased(0, 38) then
+                    showHelp = false
+                    ESX.TriggerServerCallback('GMD_Christmas:HasMissionFinished', function(hasFinishedDeerGame)
+                        if hasFinishedDeerGame then
+                            OpenFullMenu()
+                        else
+                            OpenDeerMenu()
+                        end
+                    end)
                 end
             end
+        end
 
         if not EnteredRadius then
             Wait(1000)
+            showHelp = true
         end
     end
 end)
 
-function OpenFullMenu()
-    lib.registerContext({
-        id = 'FullMenu',
-        title = 'Santa Claus',
-        options = {
-            {
-                title = 'Deer Searching',
-                description = 'Help Santa find his reindeer',
-                icon = 'image-portrait',
-                arrow = true,
-                onSelect = function()
-                    Wait(500)
-                    showsubtitle("Mir sind meine Rentiere entlaufen und mit euren geschenken abgehauen!!", 1000)
-                    Wait(1500)
-                    showsubtitle("Kannst du sie suchen helfen?", 1000)
-                    Wait(1500)
-                    showsubtitle("Ansonsten war es das mit dem Weihnachtsfest und ihr müsst ohne Geschenke auskommen", 1000)
-                    Wait(1500)
-                    showsubtitle("Hier hast du von mir ein Zuckerstangen Laufstock, nutze ihn wenn du eines meiner", 1000)
-                    Wait(1500)
-                    showsubtitle("Rentiere siehst ich komme dann...", 1000)
-                    Wait(1500)
-                    TriggerServerEvent('GMD_Christmas:giveXmasSearchItem')
-                    SpawnSearchDears()
-                end,
-            },
-            {
-                title = 'Gift Job',
-                description = 'Earn additional Golden Tickets',
-                icon = 'user',
-                arrow = true,
-                onSelect = function()
-                    Wait(500)
-                    showsubtitle("Danke dir nochmals für deine Hilfe!!", 1000)
-                    Wait(1500)
-                    showsubtitle("Wenn du magst könntest du mir helfen Geschenke auszuliefern?", 1000)
-                    Wait(1500)
-                    showsubtitle("Ich Belohne dich mit Goldene Tickets die du denn bei meinem Wichtel", 1000)
-                    Wait(1500)
-                    showsubtitle("eintauschen desso mehr du mir Hilfst desso ein besseres Geschenk erhältst du von mir", 1500)
-                    Wait(2000)
-                    CreateGiftBlips()
-                end,
-            }
-        }
-    })
-    lib.showContext('FullMenu')
-end
-
-function OpenDeerMenu()
-    lib.registerContext({
-        id = 'DeerMenu',
-        title = 'Santa Claus',
-        options = {
-            {
-                title = 'Deer Searching',
-                description = 'Help Santa find his reindeer',
-                icon = 'image-portrait',
-                arrow = true,
-                onSelect = function()
-                    Wait(500)
-                    showsubtitle("Mir sind meine Rentiere entlaufen und mit euren geschenken abgehauen!!", 1000)
-                    Wait(1500)
-                    showsubtitle("Kannst du sie suchen helfen?", 1000)
-                    Wait(1500)
-                    showsubtitle("Ansonsten war es das mit dem Weihnachtsfest und ihr müsst ohne Geschenke auskommen", 1000)
-                    Wait(1500)
-                    showsubtitle("Hier hast du von mir ein Zuckerstangen Laufstock, nutze ihn wenn du eines meiner", 1000)
-                    Wait(1500)
-                    showsubtitle("Rentiere siehst ich komme dann...", 1000)
-                    Wait(1500)
-                    TriggerServerEvent('GMD_Christmas:giveXmasSearchItem')
-                    SpawnSearchDears()
-                end,
-            }
-        }
-    })
-
-    lib.showContext('DeerMenu')
-end
-
 function SpawnSearchDears()
+    PlayerInSearch = true
     for _, v in ipairs(Config.DeerZones) do
         local shuffled = {}
 
@@ -268,6 +183,54 @@ function CreateGiftBlips()
         end
     end
 end
+
+CreateThread(function()
+    local collectingProp = false
+
+    while true do
+        Wait(1)
+
+        if #PedCoords > 0 and not collectingProp then
+            for k, v in pairs(PedCoords) do
+                local dist = #(GetEntityCoords(PlayerPedId()) - vector3(v.x, v.y, v.z))
+
+                if dist <= HelpDistance then
+                    showsubtitle(Config.Language[Config.Locale]['near_artifact'], 2000)
+
+                    if dist <= 2.0 then
+                        ESX.ShowHelpNotification(Config.Language[Config.Locale]['press_investigate'])
+                        
+                        if IsControlJustReleased(0, 38) then
+                            collectingProp = true
+                            -- Synced showsubtitle mit Hohohohoho....
+                            -- Santa Spawnt nah am rentier und fängt dieses ein mit GAS effekt 
+                            -- danach kommt nochmal Hohohoh danke dir nun suche bitte noch meine restlichen DeerCounts  
+                            local closestPed = GetClosestObjectOfType(GetEntityCoords(PlayerPedId()), 2.0, GetHashKey(PedSpawn), false)
+
+                            if DoesEntityExist(closestPed) then
+                                DeleteObject(closestPed)
+                                table.remove(PedCoords, k)
+                                showsubtitle(Config.Language[Config.Locale]['search_counter']:format(#PedCoords), 3000)
+                                Wait(1500)
+                            end
+                            collectingProp = false
+
+                            if #PedCoords == 0 then
+                                local playerPed = PlayerPedId()
+                                local randomCount = math.random(1, 5)
+                                TriggerServerEvent('GMD_Christmas:GiveHelloweenLoose', randomCount)
+                                PlayerInSearch = false
+                                Wait(1000)
+                            end
+                        end
+                    end
+                end
+            end
+        else
+            Wait(5000)
+        end
+    end
+end)
 
 function showsubtitle(text, time)
     ClearPrints()
