@@ -13,7 +13,8 @@ data_file 'PED_METADATA_FILE' 'stream/peds.meta'
 lua54 'yes'
 
 shared_scripts {
-	'config.lua'
+	'config.lua',
+	'@ox_lib/init.lua'
 }
 
 files {
@@ -26,7 +27,8 @@ server_script {
   }
 
 client_scripts {
-	'client/client.lua'
+	'client/client.lua',
+	'client/ox_lib.lua'
 }
 
 dependencies {
