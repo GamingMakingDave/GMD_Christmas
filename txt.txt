@@ -1,33 +1,14 @@
-Es klingt nach einer unterhaltsamen und festlichen Idee für ein Weihnachtsmarkt-Script in FiveM! Hier sind einige weitere Vorschläge, 
-die das Roleplay (RP) steigern könnten:
+Man kann 1 mission starten das sind rentiere finden nach dieser mission ist erst der geschenke verteiler job verfügbar
+(Hier müsste man denn serverside den check holen und nur beim spieler der die mission abgeschlossen hat der santa nicht mehr taumelt sondern feiert oder jubelt) 
+Zu anderen ohne missions steht santa traurig da, ist santa froh und du lieferst seine geschenke aus bekommst du tickets die tickets können bei einem npc oder teamler 
+eingetauscht werden wenn, nur über ox_lib und wieviel lose was für ein gewinn sind....
 
 
-Weihnachtsgeschenke verteilen: Spieler können als Weihnachtsmänner oder -frauen verkleidet sein und Geschenke an andere Spieler verteilen. 
-Die Geschenke könnten zufällige Gegenstände oder Belohnungen enthalten.
+Das einsammeln der tiere passiert über ein Item was man mehrmals wie dem DeerCount  benutzen kann kommt santa synced und holt das deer persönlich ab mit eine nachricht wie 
+HOHO bringe mir noch meine restlichen 4 (Bei config DeerCount 5) wie im helloween und diese nachricht nur beim auslöser spieler andere sehen nur santa und bekommen ein meldung
 
-Schneeballschlacht: Erstelle eine Schneeballschlacht-Arena, in der Spieler sich in Teams bekämpfen können. Das Gewinnerteam könnte spezielle
- Belohnungen oder Erfahrungspunkte erhalten.
+HOHOHO Fröhliche Weihnachten wenn er sein rentier abholt.
 
-Eislaufbahn: Füge eine Eislaufbahn hinzu, auf der die Spieler Schlittschuh laufen können. Eventuell könnten sie hier auch Rennen veranstalten.
-
-Weihnachtsmusik-Quiz: Stelle eine Bühne oder ein Podium auf, auf dem ein Weihnachtsmusik-Quiz stattfindet. Diejenigen, die die meisten Fragen 
-richtig beantworten, könnten Preise gewinnen.
-
-Foto-Booth mit Weihnachtsrequisiten: Setze eine Foto-Booth mit festlichen Requisiten auf, sodass die Spieler Erinnerungsfotos machen können. 
-Diese könnten dann in ihren Ingame-Wohnungen angezeigt werden.
-
-Karussell oder Fahrgeschäfte: Integriere ein Karussell oder andere Fahrgeschäfte, die die Spieler nutzen können.
-
-Lebendige Weihnachtsfiguren: Stelle Charaktere wie den Grinch, Frosty den Schneemann oder Rudolph den Rentier als NPCs auf den Markt. S
-pieler können mit ihnen interagieren und möglicherweise spezielle Aufgaben von ihnen erhalten.
-
-Tägliche Herausforderungen: Füge tägliche Herausforderungen hinzu, die mit dem Weihnachtsthema zu tun haben. 
-Spieler könnten dafür Belohnungen wie spezielle Weihnachtskleidung oder Dekorationen erhalten.
-
-Weihnachtsmarktstände: Erstelle Stände mit verschiedenen Produkten wie heißen Getränken, gebrannten Mandeln, Lebkuchen und mehr. 
-Spieler können an den Ständen interagieren und vielleicht sogar selbst welche betreiben.
-
-Weihnachtliches Feuerwerk: Plane ein spektakuläres Feuerwerk, das zu bestimmten Zeiten am Himmel erscheint, um die festliche Stimmung zu unterstreichen.
-
-Stelle sicher, dass die Aktivitäten gut in die Spielwelt integriert sind und die Spieler dazu ermutigen, miteinander zu interagieren. 
-Ein abwechslungsreiches und unterhaltsames Weihnachtsskript kann definitiv das RP-Erlebnis für die Spieler verbessern.
+Andere spieler können nur das rentier sehen aber nicht den Blip nur der auslöser kann den blip sehen, (Ortung wenn es nativ gibt (Sichtweite abfrage)) 
+das sich der santa via subtext meldet wenn man inrichtung des rentiers schaut um es spannender zu machen als sichtfeld könnte ein fernglas zum einsatz kommen und wenn
+man das ped eine bestimmte zeit beobachtet sieht man santa wie er das rentier einsammelt.
