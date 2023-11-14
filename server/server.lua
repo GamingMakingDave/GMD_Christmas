@@ -11,3 +11,8 @@ AddEventHandler('GMD_Christmas:SpawnPeds', function(source)
     local xPlayer = ESX.GetPlayerFromId(source)
     -- hier Spawn Rehntiere in zone
 end)
+
+RegisterServerEvent('GMD_Christmas:SyncPeds')
+AddEventHandler('GMD_Christmas:SyncPeds', function()
+    TriggerClientEvent('GMD_Christmas:SyncPedsByPlayer', -1)
+end)

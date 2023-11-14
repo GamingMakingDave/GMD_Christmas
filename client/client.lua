@@ -100,8 +100,6 @@ CreateThread(function()
                         showsubtitle("Rehntiere siehst ich komme dann...", 1000)
                         Wait(1500)
                         TriggerServerEvent('GMD_Christmas:giveXmasSearchItem')
-                        -- TriggerServerEvent('GMD_Christmas:SpawnPeds')
-
                     end
                 end
             end
@@ -128,7 +126,8 @@ function SpawnSearchDears()
                 Wait(15)
             end
 
-            local PedSpawn = CreatePed(4, GetHashKey(v.DeerPedModel), Coords.x, Coords.y, Coords.z, Coords.h, false, true)
+            PedSpawn = CreatePed(4, GetHashKey(v.DeerPedModel), Coords.x, Coords.y, Coords.z, Coords.h, false, true)
+            TriggerServerEvent('GMD_Christmas:SyncPeds', PedSpawn)
             SetPedArmour(PedSpawn, 200)
             SetEntityMaxHealth(PedSpawn, 500)
             SetEntityHealth(PedSpawn, 500)
@@ -147,7 +146,6 @@ function SpawnSearchDears()
         end
     end
 end
-
 
 function showsubtitle(text, time)
     ClearPrints()
