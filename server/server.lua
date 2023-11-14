@@ -6,6 +6,33 @@ AddEventHandler('GMD_Christmas:giveXmasSearchItem', function(source)
     xPlayer.addInventoryItem('santas_sugar_stick', 1)
 end)
 
+RegisterServerEvent('GMD_Christmas:giveXmasStocking')
+AddEventHandler('GMD_Christmas:giveXmasSearchStocking', function(source)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    xPlayer.addInventoryItem('christmas_stocking', 1)
+    -- HIER ITEMS ZUR SOCKE HINZUFÜGEN
+end)
+
+ESX.RegisterUsableItem('christmas_stocking', function(source)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    local bagItem = xPlayer.getInventoryItem('christmas_stocking')
+    
+    if bagItem.count > 0 then
+        for i, item in ipairs(DeerFinishedItems) do
+            if item.identifier == source then
+                if xPlayer.canCarryItem("HIER ITEMS AUS SOCKE") then
+                    -- xPlayer.addInventoryItem(item.name, item.quantity)
+                    -- table.remove(Playeritems, i)
+                    xPlayer.removeInventoryItem('christmas_stocking', 1)
+                    -- TriggerClientEvent('GMD_Shops:RemoveShoppingBag', source)
+                else
+                    xPlayer.showNotification("You can't carry all the items from the shopping bag.", "error", 3000)
+                end
+            end
+        end
+    end
+end)
+
 RegisterServerEvent('GMD_Christmas:SpawnPeds')
 AddEventHandler('GMD_Christmas:SpawnPeds', function(source)
     local xPlayer = ESX.GetPlayerFromId(source)
@@ -20,21 +47,32 @@ end)
 
 ESX.RegisterServerCallback('GMD_Christmas:HasMissionFinished', function(source, cb)
     local xPlayer = ESX.GetPlayerFromId(source)
+    
+    -- Überprüfen, ob der Spieler in der Datenbank existiert
+    MySQL.Async.fetchScalar('SELECT * FROM xmas WHERE identifier = @identifier', 
+    {
+        ['@identifier'] = xPlayer.getIdentifier()
+    }, function(result)
+        local existsInDatabase = tonumber(result) > 0
 
-    if xPlayer then
-        local identifier = xPlayer.identifier
+        if not existsInDatabase then
+            -- Spieler existiert nicht in der Datenbank, füge ihn ein
+            MySQL.Async.execute('INSERT INTO xmas (identifier, hasFinishedDeerGame) VALUES (@identifier, 0)',
+            {
+                ['@identifier'] = xPlayer.getIdentifier()
+            })
+        end
 
-        MySQL.Async.fetchAll('SELECT hasFinishedDeerGame FROM users WHERE identifier = @identifier', {
-            ['@identifier'] = identifier
-        }, function(result)
-            if result[1] and result[1].hasFinishedDeerGame then
-                cb(true)
-            else
-                cb(false)
-            end
+        -- Überprüfen, ob der Spieler die Mission abgeschlossen hat
+        MySQL.Async.fetchScalar('SELECT hasFinishedDeerGame FROM xmas WHERE identifier = @identifier', 
+        {
+            ['@identifier'] = xPlayer.getIdentifier()
+        }, function(hasFinishedDeerGame)
+            -- Aufruf des Callbacks mit dem Ergebnis
+            cb(hasFinishedDeerGame == 1)
         end)
-    else
-        cb(false)
-    end
+    end)
 end)
+
+
 
