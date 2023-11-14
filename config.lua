@@ -14,8 +14,7 @@ Config.ChristmasMusicVolume = 0.1
 Config.SantaClausModel = "Santaclaus"
 Config.SantaClausPosition = vector3(-1620.303, -1050.869, 12.151)
 Config.SantaClausHeading = 149.264
-Config.SantaClausRandoms = 50
-
+Config.SantaClausRandoms = 50 
 
 -- DEER MISSION
 Config.DeerZones = {
@@ -25,17 +24,16 @@ Config.DeerZones = {
         DeerPedModel = "a_c_deer",
         DeerZonesRadius = 50.0,
         DeerFinishedItem = "christmas_stocking",
+
         DeerFinishedSugarItems = 10,
         DeerRandomTicketCount = 5,
 
         DeerFinishedItems = {
-            items ={
-               {"sugar_cone", math.random(1, DeerFinishedSugarItems)},
-               {"chocolate_santa_claus", math.random(1, DeerFinishedSugarItems)},
-               {"peanut_butter_reindeer_cookies", math.random(1, DeerFinishedSugarItems)},
-               {"gingerbread", math.random(1, DeerFinishedSugarItems)},
-               {"gold_ticket", math.random(1, DeerFinishedSugarItems)}
-            },
+            {"sugar_cone", math.random(1, DeerFinishedSugarItems)},
+            {"chocolate_santa_claus", math.random(1, DeerFinishedSugarItems)},
+            {"peanut_butter_reindeer_cookies", math.random(1, DeerFinishedSugarItems)},
+            {"gingerbread", math.random(1, DeerFinishedSugarItems)},
+            {"gold_ticket", math.random(1, DeerFinishedSugarItems)}
         },
 
         Coords = {
@@ -60,7 +58,6 @@ Config.GiftJob = {
         EnableChristmasDoorAnim = true,
         GiftItemName = "christmas_giftbox",
         GiftEntryRandom = 50,
-
         Coords = {
             vector3(106.989, 466.760, 147.562),
             vector3(106.989, 466.760, 147.562),
