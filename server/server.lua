@@ -16,3 +16,25 @@ RegisterServerEvent('GMD_Christmas:SyncPeds')
 AddEventHandler('GMD_Christmas:SyncPeds', function()
     TriggerClientEvent('GMD_Christmas:SyncPedsByPlayer', -1)
 end)
+
+
+ESX.RegisterServerCallback('GMD_Christmas:HasMissionFinished', function(source, cb)
+    local xPlayer = ESX.GetPlayerFromId(source)
+
+    if xPlayer then
+        local identifier = xPlayer.identifier
+
+        MySQL.Async.fetchAll('SELECT hasFinishedDeerGame FROM users WHERE identifier = @identifier', {
+            ['@identifier'] = identifier
+        }, function(result)
+            if result[1] and result[1].hasFinishedDeerGame then
+                cb(true)
+            else
+                cb(false)
+            end
+        end)
+    else
+        cb(false)
+    end
+end)
+
