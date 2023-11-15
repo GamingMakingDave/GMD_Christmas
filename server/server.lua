@@ -33,11 +33,11 @@ ESX.RegisterUsableItem('christmas_stocking', function(source)
     end
 end)
 
-RegisterServerEvent('GMD_Christmas:SpawnPeds')
-AddEventHandler('GMD_Christmas:SpawnPeds', function(source)
-    local xPlayer = ESX.GetPlayerFromId(source)
-    -- hier Spawn Rehntiere in zone
-end)
+-- RegisterServerEvent('GMD_Christmas:SpawnPeds')
+-- AddEventHandler('GMD_Christmas:SpawnPeds', function(source)
+--     local xPlayer = ESX.GetPlayerFromId(source)
+--     -- hier Spawn Rehntiere in zone
+-- end)
 
 RegisterServerEvent('GMD_Christmas:SyncPeds')
 AddEventHandler('GMD_Christmas:SyncPeds', function()
@@ -56,19 +56,16 @@ ESX.RegisterServerCallback('GMD_Christmas:HasMissionFinished', function(source, 
         local existsInDatabase = tonumber(result) > 0
 
         if not existsInDatabase then
-            -- Spieler existiert nicht in der Datenbank, füge ihn ein
             MySQL.Async.execute('INSERT INTO xmas (identifier, hasFinishedDeerGame) VALUES (@identifier, 0)',
             {
                 ['@identifier'] = xPlayer.getIdentifier()
             })
         end
 
-        -- Überprüfen, ob der Spieler die Mission abgeschlossen hat
         MySQL.Async.fetchScalar('SELECT hasFinishedDeerGame FROM xmas WHERE identifier = @identifier', 
         {
             ['@identifier'] = xPlayer.getIdentifier()
         }, function(hasFinishedDeerGame)
-            -- Aufruf des Callbacks mit dem Ergebnis
             cb(hasFinishedDeerGame == 1)
         end)
     end)
