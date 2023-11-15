@@ -185,12 +185,12 @@ function CreateGiftBlips()
 end
 
 CreateThread(function()
-    local collectingProp = false
+    local FindDeer = false
 
     while true do
         Wait(1)
 
-        if #PedCoords > 0 and not collectingProp then
+        if #PedCoords > 0 and not FindDeer then
             for k, v in pairs(PedCoords) do
                 local dist = #(GetEntityCoords(PlayerPedId()) - vector3(v.x, v.y, v.z))
 
@@ -201,7 +201,7 @@ CreateThread(function()
                         ESX.ShowHelpNotification(Config.Language[Config.Locale]['press_investigate'])
                         
                         if IsControlJustReleased(0, 38) then
-                            collectingProp = true
+                            FindDeer = true
                             -- Synced showsubtitle mit Hohohohoho....
                             -- Santa Spawnt nah am rentier und fängt dieses ein mit GAS effekt 
                             -- danach kommt nochmal Hohohoh danke dir nun suche bitte noch meine restlichen DeerCounts  
@@ -213,7 +213,7 @@ CreateThread(function()
                                 showsubtitle(Config.Language[Config.Locale]['search_counter']:format(#PedCoords), 3000)
                                 Wait(1500)
                             end
-                            collectingProp = false
+                            FindDeer = false
 
                             if #PedCoords == 0 then
                                 local playerPed = PlayerPedId()
