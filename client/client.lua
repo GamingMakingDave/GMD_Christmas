@@ -10,6 +10,7 @@ local PedCoords = {}
 local EnteredRadius = false
 local showHelp = true
 local DeerCount = 0
+local HelpDistance = 15
 
 AddEventHandler('onResourceStart', function(resource)
     if GetCurrentResourceName() == resource then 
@@ -189,22 +190,45 @@ CreateThread(function()
         
         if GetEntityModel(Ped) == GetHashKey('a_c_deer') then
             local dist = #(pedCoords - GetEntityCoords(Ped))
+            if dist <= HelpDistance then
+                showsubtitle('Du bist in der Nähe eines meines Rentiers halte deine Augen offen', 2000)
 
-            if dist <= 3.0 then
-                -- Drücke E und so
-
-                -- wenn Spieler E gedrückt hat dann muss jetzt der Check hin mit item und PlayerInSearch und so 
-
-                --wenn callback passt
-                if DeerCount == 1 then
-                    DeerCount = 0
-                    TriggerServerEvent('GMD_Christmas:giveXmasSearchStocking')
-                    -- Suche ist fertig lol
-                else 
-                    DeerCount = DeerCount - 1
+                if dist <= 3.0 then
+                    ESX.ShowHelpNotification(Config.Language[Config.Locale]['has_found_deer'])
+                    ESX.TriggerServerCallback('GMD_Christmas:HasSearchItem',
+                    function(check)
+                        if check and PlayerInSearch then
+                            if DeerCount == 1 then
+                                DeerCount = 0
+                                Wait(500)
+                                showsubtitle('Danke du hast all meine Rentiere gefunden!', 2000)
+                                Wait(2500)
+                                showsubtitle('Komme doch bitte erneut zu mir ich brauche weiterhin deine hilfe', 3500)
+                                Wait(4000)
+                                local scaleformHandle = RequestScaleformMovie("mp_big_message_freemode")
+                                while not HasScaleformMovieLoaded(scaleformHandle) do
+                                  Citizen.Wait(0)
+                                end
+                              
+                                BeginScaleformMovieMethod(scaleformHandle, "SHOW_SHARD_WASTED_MP_MESSAGE")
+                                PushScaleformMovieMethodParameterString("MISSION PASSED")
+                                PushScaleformMovieMethodParameterString("Danke dir für deine Hilfe")
+                                PushScaleformMovieMethodParameterInt(5)
+                                EndScaleformMovieMethod()
+                              
+                                while true do
+                                  Citizen.Wait(0)
+                                  DrawScaleformMovieFullscreen(scaleformHandle, 255, 255, 255, 255)
+                                end
+                                TriggerServerEvent('GMD_Christmas:giveXmasSearchStocking')
+                            else 
+                                DeerCount = DeerCount - 1
+                            end
+                        end
+                    end)
+                else
+                    Wait(500)
                 end
-            else
-                Wait(500)
             end
         else
             Wait(1000)
@@ -212,53 +236,6 @@ CreateThread(function()
     end
 end)
 
--- CreateThread(function()
---     local FindDeer = false
-
---     while true do
---         Wait(1)
-
---         if #PedCoords > 0 and not FindDeer then
---             for k, v in pairs(PedCoords) do
---                 local dist = #(GetEntityCoords(PlayerPedId()) - vector3(v.x, v.y, v.z))
-
---                 if dist <= HelpDistance then
---                     showsubtitle(Config.Language[Config.Locale]['near_artifact'], 2000)
-
---                     if dist <= 2.0 then
---                         ESX.ShowHelpNotification(Config.Language[Config.Locale]['press_investigate'])
-                        
---                         if IsControlJustReleased(0, 38) then
---                             FindDeer = true
---                             -- Synced showsubtitle mit Hohohohoho....
---                             -- Santa Spawnt nah am rentier und fängt dieses ein mit GAS effekt 
---                             -- danach kommt nochmal Hohohoh danke dir nun suche bitte noch meine restlichen DeerCounts  
---                             local closestPed = GetClosestObjectOfType(GetEntityCoords(PlayerPedId()), 2.0, GetHashKey(PedSpawn), false)
-
---                             if DoesEntityExist(closestPed) then
---                                 DeleteObject(closestPed)
---                                 table.remove(PedCoords, k)
---                                 showsubtitle(Config.Language[Config.Locale]['search_counter']:format(#PedCoords), 3000)
---                                 Wait(1500)
---                             end
---                             FindDeer = false
-
---                             if #PedCoords == 0 then
---                                 local playerPed = PlayerPedId()
---                                 local randomCount = math.random(1, 5)
---                                 TriggerServerEvent('GMD_Christmas:GiveHelloweenLoose', randomCount)
---                                 PlayerInSearch = false
---                                 Wait(1000)
---                             end
---                         end
---                     end
---                 end
---             end
---         else
---             Wait(5000)
---         end
---     end
--- end)
 
 function showsubtitle(text, time)
     ClearPrints()
