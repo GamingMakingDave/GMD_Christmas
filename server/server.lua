@@ -41,11 +41,14 @@ ESX.RegisterUsableItem('christmas_stocking', function(source)
     end
 end)
 
--- RegisterServerEvent('GMD_Christmas:SpawnPeds')
--- AddEventHandler('GMD_Christmas:SpawnPeds', function(source)
---     local xPlayer = ESX.GetPlayerFromId(source)
---     -- hier Spawn Rehntiere in zone
--- end)
+ESX.RegisterServerCallback('GMD_Christmas:HasSearchItem', function(source, cb)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    if xPlayer.getInventoryItem('christmas_stocking') ~= nil and xPlayer.getInventoryItem('christmas_stocking').count >= 1 then
+        cb(true)
+    else
+        cb(false)
+    end
+end)
 
 RegisterServerEvent('GMD_Christmas:SyncPeds')
 AddEventHandler('GMD_Christmas:SyncPeds', function()
