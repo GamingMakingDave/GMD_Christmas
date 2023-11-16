@@ -25,15 +25,15 @@ Config.DeerZones = {
         DeerZonesRadius = 50.0,
         DeerFinishedItem = "christmas_stocking",
 
-        DeerFinishedSugarItems = 10,
         DeerRandomTicketCount = 5,
+        GoldTicker = "gold_ticket",
 
+        DeerFinishedSugarItems = 10,
         DeerFinishedItems = {
-            {"sugar_cone", math.random(1, DeerFinishedSugarItems)},
-            {"chocolate_santa_claus", math.random(1, DeerFinishedSugarItems)},
-            {"peanut_butter_reindeer_cookies", math.random(1, DeerFinishedSugarItems)},
-            {"gingerbread", math.random(1, DeerFinishedSugarItems)},
-            {"gold_ticket", math.random(1, DeerFinishedSugarItems)}
+            "sugar_cone",
+            "chocolate_santa_claus",
+            "peanut_butter_reindeer_cookies",
+            "gingerbread",
         },
 
         Coords = {

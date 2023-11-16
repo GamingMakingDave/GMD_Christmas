@@ -1,36 +1,43 @@
 ESX = exports['es_extended']:getSharedObject()
 
 RegisterServerEvent('GMD_Christmas:giveXmasSearchItem')
-AddEventHandler('GMD_Christmas:giveXmasSearchItem', function(source)
+AddEventHandler('GMD_Christmas:giveXmasSearchItem', function()
     local xPlayer = ESX.GetPlayerFromId(source)
     xPlayer.addInventoryItem('santas_sugar_stick', 1)
 end)
 
-RegisterServerEvent('GMD_Christmas:giveXmasStocking')
-AddEventHandler('GMD_Christmas:giveXmasSearchStocking', function(source)
+RegisterServerEvent('GMD_Christmas:giveXmasSearchStocking')
+AddEventHandler('GMD_Christmas:giveXmasSearchStocking', function()
     local xPlayer = ESX.GetPlayerFromId(source)
     xPlayer.addInventoryItem('christmas_stocking', 1)
-    -- HIER ITEMS ZUR SOCKE HINZUFÜGEN
 end)
 
 ESX.RegisterUsableItem('christmas_stocking', function(source)
     local xPlayer = ESX.GetPlayerFromId(source)
-    local bagItem = xPlayer.getInventoryItem('christmas_stocking')
+    local CanCarryItems = true
+    local Items = {}
 
-    if bagItem.count > 0 then
-        for i, item in ipairs(DeerFinishedItems) do
-            if item.identifier == source then
-                local random = math.random(1, DeerFinishedSugarItems)
-                if xPlayer.canCarryItem("HIER ITEMS AUS SOCKE") then
-                    xPlayer.addInventoryItem(item.name, random)
-                    -- table.remove(Playeritems, i)
-                    xPlayer.removeInventoryItem('christmas_stocking', 1)
-                    -- TriggerClientEvent('GMD_Shops:RemoveShoppingBag', source)
-                else
-                    xPlayer.showNotification("You can't carry all the items from the shopping bag.", "error", 3000)
-                end
-            end
+    for i, item in pairs(Config.DeerZones[1].DeerFinishedItems) do
+        
+        local random = math.random(1, Config.DeerZones[1].DeerFinishedSugarItems)
+
+        if xPlayer.canCarryItem(item, random) then
+            table.insert(Items, {item, random})
+        else
+            CanCarryItems = false
+            break
         end
+    end
+
+    if not CanCarryItems then
+        print("dein Inventar ist zu voll für die items lol")
+    else
+        for k, v in ipairs(Items) do
+            xPlayer.addInventoryItem(v.item, v.random)
+        end
+
+        xPlayer.addInventoryItem(Config.DeerZones[1].GoldTicker, Config.DeerZones[1].DeerRandomTicketCount)
+        xPlayer.removeInventoryItem('christmas_stocking', 1)
     end
 end)
 
@@ -52,9 +59,8 @@ ESX.RegisterServerCallback('GMD_Christmas:HasMissionFinished', function(source, 
     MySQL.Async.fetchScalar('SELECT * FROM xmas WHERE identifier = @identifier', {
         ['@identifier'] = xPlayer.getIdentifier()
     }, function(result)
-        local existsInDatabase = tonumber(result) > 0
 
-        if not existsInDatabase then
+        if result == nil then
             MySQL.Async.execute('INSERT INTO xmas (identifier, hasFinishedDeerGame) VALUES (@identifier, 0)', {
                 ['@identifier'] = xPlayer.getIdentifier()
             })
