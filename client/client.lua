@@ -11,8 +11,8 @@ local showHelp = true
 
 AddEventHandler('onResourceStart', function(resource)
     if GetCurrentResourceName() == resource then 
-         xSound:Destroy("Xmas")
-         PlayXmasMusik()
+        xSound:Destroy("Xmas")
+        PlayXmasMusik()
     end
 end)
 
@@ -33,46 +33,41 @@ function PlayXmasMusik()
 end
 
 CreateThread(function()
-    while true do
-        Wait(0)
-        if not SantaClausSpawned then
-            modelHash = Config.SantaClausModel
+    if not SantaClausSpawned then
+        local modelHash = Config.SantaClausModel
 
-            RequestModel(modelHash)
-            while not HasModelLoaded(modelHash) do
-                print("lade")
-                Wait(200)
-            end
-        
-            RequestAnimDict("random@drunk_driver_1")
-
-            while not HasAnimDictLoaded("random@drunk_driver_1") do
-                Wait(100)
-            end
-
-            local santa = CreatePed(5, modelHash, Config.SantaClausPosition, false, true)
-            SetEntityInvincible(santa, true)
-            SetEntityHeading(santa, Config.SantaClausHeading)
-            FreezeEntityPosition(santa, true)
-            SetPedCanBeTargetted(santa, false)
-            FreezeEntityPosition(santa, true)
-            SetEntityInvincible(santa, true)
-            SetBlockingOfNonTemporaryEvents(santa, true)
-            SetEveryoneIgnorePlayer(PlayerPedId(), true)
-            SetPedCanBeTargettedByPlayer(santa, PlayerPedId(), false)
-            SetPedCombatAttributes(santa, 46, true)
-            SetPedCombatAttributes(santa, 17, true)
-            SetPedCombatAttributes(santa, 5, true)
-            SetPedCombatAttributes(santa, 20, true)
-            SetPedCombatAttributes(santa, 52, true)
-            SetPedFleeAttributes(santa, 0, false)
-            SetPedFleeAttributes(santa, 128, false)
-            SetPedAccuracy(santa, 70)
-            SetPedDropsWeaponsWhenDead(santa, false)
-            TaskPlayAnim(santa, "random@drunk_driver_1", "drunk_driver_stand_loop_dd1", 8.0, 8.0, -1, 1, 0, false, false, false)
-            SantaClausSpawned = true
+        RequestModel(modelHash)
+        while not HasModelLoaded(modelHash) do
+            Wait(200)
         end
-        break
+    
+        RequestAnimDict("random@drunk_driver_1")
+
+        while not HasAnimDictLoaded("random@drunk_driver_1") do
+            Wait(100)
+        end
+
+        local santa = CreatePed(5, modelHash, Config.SantaClausPosition, false, true)
+        SetEntityInvincible(santa, true)
+        SetEntityHeading(santa, Config.SantaClausHeading)
+        FreezeEntityPosition(santa, true)
+        SetPedCanBeTargetted(santa, false)
+        FreezeEntityPosition(santa, true)
+        SetEntityInvincible(santa, true)
+        SetBlockingOfNonTemporaryEvents(santa, true)
+        SetEveryoneIgnorePlayer(PlayerPedId(), true)
+        SetPedCanBeTargettedByPlayer(santa, PlayerPedId(), false)
+        SetPedCombatAttributes(santa, 46, true)
+        SetPedCombatAttributes(santa, 17, true)
+        SetPedCombatAttributes(santa, 5, true)
+        SetPedCombatAttributes(santa, 20, true)
+        SetPedCombatAttributes(santa, 52, true)
+        SetPedFleeAttributes(santa, 0, false)
+        SetPedFleeAttributes(santa, 128, false)
+        SetPedAccuracy(santa, 70)
+        SetPedDropsWeaponsWhenDead(santa, false)
+        TaskPlayAnim(santa, "random@drunk_driver_1", "drunk_driver_stand_loop_dd1", 8.0, 8.0, -1, 1, 0, false, false, false)
+        SantaClausSpawned = true
     end
 end)
 
@@ -82,24 +77,22 @@ CreateThread(function()
         EnteredRadius = false
         local dist = #(GetEntityCoords(PlayerPedId()) - Config.SantaClausPosition)
 
-        if dist <= 3.0 then
+        if dist <= 3.0 and not PlayerInSearch then
             EnteredRadius = true
 
-            if not PlayerInSearch then
-                if showHelp then
-                    ESX.ShowHelpNotification((Config.Language[Config.Local]['santa_helptext']))
-                end
+            if showHelp then
+                ESX.ShowHelpNotification((Config.Language[Config.Local]['santa_helptext']))
+            end
 
-                if IsControlJustReleased(0, 38) then
-                    showHelp = false
-                    ESX.TriggerServerCallback('GMD_Christmas:HasMissionFinished', function(hasFinishedDeerGame)
-                        if hasFinishedDeerGame then
-                            OpenFullMenu()
-                        else
-                            OpenDeerMenu()
-                        end
-                    end)
-                end
+            if IsControlJustReleased(0, 38) then
+                showHelp = false
+                ESX.TriggerServerCallback('GMD_Christmas:HasMissionFinished', function(hasFinishedDeerGame)
+                    if hasFinishedDeerGame then
+                        OpenFullMenu()
+                    else
+                        OpenDeerMenu()
+                    end
+                end)
             end
         end
 

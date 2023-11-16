@@ -16,12 +16,13 @@ end)
 ESX.RegisterUsableItem('christmas_stocking', function(source)
     local xPlayer = ESX.GetPlayerFromId(source)
     local bagItem = xPlayer.getInventoryItem('christmas_stocking')
-    
+
     if bagItem.count > 0 then
         for i, item in ipairs(DeerFinishedItems) do
             if item.identifier == source then
+                local random = math.random(1, DeerFinishedSugarItems)
                 if xPlayer.canCarryItem("HIER ITEMS AUS SOCKE") then
-                    -- xPlayer.addInventoryItem(item.name, item.quantity)
+                    xPlayer.addInventoryItem(item.name, random)
                     -- table.remove(Playeritems, i)
                     xPlayer.removeInventoryItem('christmas_stocking', 1)
                     -- TriggerClientEvent('GMD_Shops:RemoveShoppingBag', source)
@@ -44,32 +45,26 @@ AddEventHandler('GMD_Christmas:SyncPeds', function()
     TriggerClientEvent('GMD_Christmas:SyncPedsByPlayer', -1)
 end)
 
-
 ESX.RegisterServerCallback('GMD_Christmas:HasMissionFinished', function(source, cb)
     local xPlayer = ESX.GetPlayerFromId(source)
-    
+
     -- Überprüfen, ob der Spieler in der Datenbank existiert
-    MySQL.Async.fetchScalar('SELECT * FROM xmas WHERE identifier = @identifier', 
-    {
+    MySQL.Async.fetchScalar('SELECT * FROM xmas WHERE identifier = @identifier', {
         ['@identifier'] = xPlayer.getIdentifier()
     }, function(result)
         local existsInDatabase = tonumber(result) > 0
 
         if not existsInDatabase then
-            MySQL.Async.execute('INSERT INTO xmas (identifier, hasFinishedDeerGame) VALUES (@identifier, 0)',
-            {
+            MySQL.Async.execute('INSERT INTO xmas (identifier, hasFinishedDeerGame) VALUES (@identifier, 0)', {
                 ['@identifier'] = xPlayer.getIdentifier()
             })
+            cb(false)
+        else
+            if tonumber(result[1].hasFinishedDeerGame) == 1 then
+                cb(true)
+            else
+                cb(false)
+            end
         end
-
-        MySQL.Async.fetchScalar('SELECT hasFinishedDeerGame FROM xmas WHERE identifier = @identifier', 
-        {
-            ['@identifier'] = xPlayer.getIdentifier()
-        }, function(hasFinishedDeerGame)
-            cb(hasFinishedDeerGame == 1)
-        end)
     end)
 end)
-
-
-
