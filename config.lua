@@ -85,5 +85,6 @@ Config.GiftJob = {
 Config.Language = {
     ['de'] = {
         ['santa_helptext'] = 'Drücke ~INPUT_PICKUP~ um mir zu helfen.',
+        ['has_found_deer'] = 'Nutze nun das item was ich dir gegeben habe'
     }
 }
