@@ -6,6 +6,8 @@ Musicplay = false
 PlayerInSearch = false
 PlayerSearching = {}
 
+PlayerInGriftjob = false
+
 local PedCoords = {}
 local blips = {}
 local EnteredRadius = false
@@ -15,6 +17,12 @@ local HelpDistance = 15
 local DeerFinished = false
 local HasUsedItem = false
 
+local availablePeds = {
+    "a_m_m_acult_01",
+    "a_m_o_acult_02",
+    "a_m_y_acult_01"
+}
+
 AddEventHandler('onResourceStart', function(resource)
     if GetCurrentResourceName() == resource then 
         xSound:Destroy("Xmas")
@@ -22,6 +30,7 @@ AddEventHandler('onResourceStart', function(resource)
     end
 end)
 
+-- Xmas Weather
 CreateThread(function()
     while Config.UseXmasWeather do
 		SetWeatherTypePersist("XMAS")
@@ -32,6 +41,7 @@ CreateThread(function()
 	end
 end)
 
+-- Xmas Market Music + Ped
 function PlayXmasMusik()
     MusicPlay = true
     xSound:PlayUrlPos("Xmas", Config.ChristmasMusicLink, Config.ChristmasMusicVolume , Config.ChristmasMarket)
@@ -109,6 +119,8 @@ CreateThread(function()
     end
 end)
 
+
+-- Deer searching
 RegisterNetEvent('GMD_Christmas:usedDeerItem')
 AddEventHandler('GMD_Christmas:usedDeerItem', function()
     HasUsedItem = true
@@ -120,6 +132,7 @@ function SpawnSearchDears()
         local shuffled = {}
 
         for i = 1, v.DeerCount do
+            print(#v.Coords)
             local randIndex = math.random(1, #v.Coords)
             table.insert(shuffled, v.Coords[randIndex])
             table.remove(v.Coords, randIndex)
@@ -154,41 +167,6 @@ function SpawnSearchDears()
     end
 end
 
--- function CreateGiftBlips()
---     for _, v in ipairs(Config.GiftJob) do
---         local shuffled = {}
-
---         for i = 1, math.random(1, 15) do
---             local randIndex = math.random(1, #v.Coords)
---             table.insert(shuffled, v.Coords[randIndex])
---             table.remove(v.Coords, randIndex)
---         end
-
---         for i, Coords in ipairs(shuffled) do
---             if v.EnableChristmasDoorAnim then
---                 RequestModel(GetHashKey(v.DeerPedModel))
---                 while not HasModelLoaded(v.DeerPedModel) do
---                     Wait(15)
---                 end
-
---                 PedSpawn = CreatePed(4, GetHashKey(v.DeerPedModel), Coords.x, Coords.y, Coords.z, Coords.h, false, true)
---             else
---                 local blip = AddBlipForEntity(PedSpawn)
---                 SetBlipSprite(blip, 40)
---                 SetBlipColour(blip, 2)
---                 SetBlipScale(blip, 0.5)
---                 SetBlipAsShortRange(blip, true)
-
---                 local blipLabel = "Gift Delivery"
---                 AddTextEntry("BLIP_NAME", blipLabel)
---                 BeginTextCommandSetBlipName("BLIP_NAME")
---                 AddTextComponentSubstringPlayerName(blipLabel)
---                 EndTextCommandSetBlipName(blip)
---             end
---         end
---     end
--- end
-
 CreateThread(function()
     while true do
         Wait(5)
@@ -217,7 +195,7 @@ CreateThread(function()
                         else 
                             DeerCount = DeerCount - 1
                             for _, blip in ipairs(blips) do
-                                RemoveBlip(blip)  -- Lösche den Blip
+                                RemoveBlip(blip)
                                 DeleteEntity(Ped)
                             end
                         end
@@ -234,8 +212,7 @@ CreateThread(function()
     end
 end)
 
-
-
+-- Scaleform Deer Mission
 function ShowCustomScaleform()
     local scaleformHandle = RequestScaleformMovie("mp_big_message_freemode")
     local eventActive = true
@@ -265,40 +242,18 @@ function ShowCustomScaleform()
     eventActive = false
 end
 
-
--- CreateThread(function()
---     while true do
---         Wait(500)
---         if DeerFinished then
---             local scaleformHandle = RequestScaleformMovie("mp_big_message_freemode") -- The scaleform you want to use
---             while not HasScaleformMovieLoaded(scaleformHandle) do -- Ensure the scaleform is actually loaded before using
---             Wait(0)
---             end
-        
---             BeginScaleformMovieMethod(scaleformHandle, "SHOW_SHARD_WASTED_MP_MESSAGE") -- The function you want to call from the AS file
---             PushScaleformMovieMethodParameterString("Big Text") -- bigTxt
---             PushScaleformMovieMethodParameterString("Smaller Text") -- msgText
---             PushScaleformMovieMethodParameterInt(5) -- colId
---             EndScaleformMovieMethod() -- Finish off the scaleform, it returns no data, so doesnt need "EndScaleformMovieMethodReturn"
-    
---             while true do -- Draw the scaleform every frame
---             Wait(0)
---             DrawScaleformMovieFullscreen(scaleformHandle, 255, 255, 255, 255) -- Draw the scaleform fullscreen
---             end
---             Wait(6000)
---             DeerFinished = false
---             break
---         end
---     end
--- end)
-
-
 function showsubtitle(text, time)
     ClearPrints()
     SetTextEntry_2("STRING")
     AddTextComponentString(text)
     DrawSubtitleTimed(time, 1)
 end
+
+-- Commands
+RegisterCommand("playmusic", function(source, args, rawCommand)
+    xSound:PlayUrlPos("Xmas", Config.ChristmasMusicLink, 0.1, Config.ChristmasMarket, true)
+    xSound:Distance("Xmas", Config.ChristmasMarketRadius)
+end, false)
 
 RegisterCommand("stopmusic", function(source, args, rawCommand)
     xSound:Destroy("Xmas")
@@ -309,17 +264,123 @@ RegisterCommand("scale", function(source, args, rawCommand)
 end, false)
 
 
-RegisterCommand("testDeer", function(source, args, rawCommand)
+RegisterCommand("debugDeer", function(source, args, rawCommand)
     SpawnSearchDears()
 end, false)
 
-RegisterCommand("playmusic", function(source, args, rawCommand)
-    xSound:PlayUrlPos("Xmas", Config.ChristmasMusicLink, 0.1, Config.ChristmasMarket, true)
-    xSound:Distance("Xmas", Config.ChristmasMarketRadius)
+RegisterCommand("debugGift", function(source, args, rawCommand)
+    GiftJob()
 end, false)
 
+-- Giftjob
+function GiftJob()
+    for _, v in ipairs(Config.GiftJob) do
+        local shuffled = {}
 
-RegisterCommand("playmusic1", function(source, args, rawCommand)
-    local pedCoords = GetEntityCoords(PlayerPedId())
-    xSound:PlayUrlPos("Xmas1", "https://www.youtube.com/watch?v=ndgsWcd3yUs", 1.0, pedCoords, false)
-end, false)
+        for i = 1, v.GiftEntryRandom do
+            print(#v.CoordsGift)
+            local randIndex = math.random(1, #v.CoordsGift)
+            table.insert(shuffled, v.CoordsGift[randIndex])
+            table.remove(v.CoordsGift, randIndex)
+        end
+
+        for i, CoordsGift in ipairs(shuffled) do
+            if v.EnableChristmasDoorAnim then
+                -- HIER ERROR FIXED COORDS NIL!!
+                local player = GetPlayerPed(-1)
+                FreezeEntityPosition(player, true)
+                SetEntityCoords(player, Coords.x, Coords.y, Coords.z, 0.0,0.0,0.0, false)
+                playAnim("timetable@jimmy@doorknock@", "knockdoor_idle", 3000)
+                Wait(1000)
+                SetEntityCoords(player, Coords.x + 1.0, Coords.y + 1.0, Coords.z, 0.0,0.0,0.0, false)
+                GiftPed = CreatePed(4, GetRandomPedHash(), Coords.x, Coords.y, Coords.z, Coords.h, false, true)
+                Wait(500)
+                playAnim()
+            else
+
+                local blip = AddBlipForEntity(v.Coords)
+                SetBlipSprite(blip, 492)
+                SetBlipColour(blip, 1)
+                SetBlipScale(blip, 0.8)
+                SetBlipAsShortRange(blip, true)
+
+                local blipLabel = "Santas Giftjob"
+                AddTextEntry("BLIP_NAME", blipLabel)
+                BeginTextCommandSetBlipName("BLIP_NAME")
+                AddTextComponentSubstringPlayerName(blipLabel)
+                EndTextCommandSetBlipName(blip)
+                table.insert(blips, blip)
+                RandomCount = #shuffled
+            end
+        end
+    end
+end
+
+
+-- function GiftJob()
+--     PlayerInGriftjob = true
+    
+
+--         -- for i, Coords in ipairs(shuffled) do
+--         --     if v.EnableChristmasDoorAnim then
+--         --         Convert4to3(Coords)
+--         --         local player = GetPlayerPed(-1)
+--         --         FreezeEntityPosition(player, true)
+--         --         SetEntityCoords(player, Coords.x, Coords.y, Coords.z, 0.0,0.0,0.0, false)
+--         --         playAnim("timetable@jimmy@doorknock@", "knockdoor_idle", 3000)
+--         --         Wait(1000)
+--         --         SetEntityCoords(player, Coords.x + 1.0, Coords.y + 1.0, Coords.z, 0.0,0.0,0.0, false)
+--         --         GiftPed = CreatePed(4, GetRandomPedHash(), Coords.x, Coords.y, Coords.z, Coords.h, false, true)
+--         --         Wait(500)
+--         --         playAnim()
+--         --     else
+
+--         --         local blip = AddBlipForEntity(v.Coords)
+--         --         SetBlipSprite(blip, 492)
+--         --         SetBlipColour(blip, 1)
+--         --         SetBlipScale(blip, 0.8)
+--         --         SetBlipAsShortRange(blip, true)
+
+--         --         local blipLabel = "Santas Giftjob"
+--         --         AddTextEntry("BLIP_NAME", blipLabel)
+--         --         BeginTextCommandSetBlipName("BLIP_NAME")
+--         --         AddTextComponentSubstringPlayerName(blipLabel)
+--         --         EndTextCommandSetBlipName(blip)
+--         --         table.insert(blips, blip)
+--         --         RandomCount = #shuffled
+--         --     end
+--         -- end
+--     end
+-- end
+
+function GetRandomPedHash()
+    local randomIndex = math.random(1, #availablePeds)
+    return GetHashKey(availablePeds[randomIndex])
+end
+
+
+-- RegisterCommand("vecconv", function(source, args, rawCommand)
+--     for _, v in ipairs(Config.GiftJob) do
+--     print("Vector4")
+--     print(v.Coords)
+--         for k, x in pairs(v.Coords) do
+--             print(x)
+--             print(Convert4to3(x))
+           
+--         end
+--     end
+-- end, false)
+
+-- function Convert4to3(Coords)
+--     return vector3(Coords.x, Coords.y, Coords.z)
+-- end
+
+
+function playAnim(animDict, animName, duration)
+    RequestAnimDict(animDict)
+    while not HasAnimDictLoaded(animDict) do 
+        Wait(0) 
+    end
+    TaskPlayAnim(GiftPed, animDict, animName, 1.0, -1.0, duration, 49, 1, false, false, false)
+    RemoveAnimDict(animDict)
+end
