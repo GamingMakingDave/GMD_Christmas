@@ -1,29 +1,8 @@
-function OpenFullMenu()
+function OpenGiftMenu()
     lib.registerContext({
         id = 'FullMenu',
         title = 'Santa Claus',
         options = {
-            {
-                title = 'Deer Searching',
-                description = 'Help Santa find his reindeer',
-                icon = 'image-portrait',
-                arrow = true,
-                onSelect = function()
-                    Wait(500)
-                    showsubtitle("Mir sind meine Rentiere entlaufen und mit euren geschenken abgehauen!!", 2000)
-                    Wait(2500)
-                    showsubtitle("Kannst du sie suchen helfen?", 1500)
-                    Wait(2000)
-                    showsubtitle("Ansonsten war es das mit dem Weihnachtsfest und ihr müsst ohne Geschenke auskommen", 2500)
-                    Wait(3000)
-                    showsubtitle("Hier hast du von mir ein Zuckerstangen Laufstock, nutze ihn wenn du eines meiner", 2500)
-                    Wait(3000)
-                    showsubtitle("Rentiere siehst ich komme dann...", 1000)
-                    Wait(1500)
-                    TriggerServerEvent('GMD_Christmas:giveXmasSearchItem')
-                    SpawnSearchDears()
-                end,
-            },
             {
                 title = 'Gift Job',
                 description = 'Earn additional Golden Tickets',
