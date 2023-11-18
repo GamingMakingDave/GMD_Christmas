@@ -12,3 +12,5 @@ HOHOHO Fröhliche Weihnachten wenn er sein rentier abholt.
 Andere spieler können nur das rentier sehen aber nicht den Blip nur der auslöser kann den blip sehen, (Ortung wenn es nativ gibt (Sichtweite abfrage)) 
 das sich der santa via subtext meldet wenn man inrichtung des rentiers schaut um es spannender zu machen als sichtfeld könnte ein fernglas zum einsatz kommen und wenn
 man das ped eine bestimmte zeit beobachtet sieht man santa wie er das rentier einsammelt.
+
+Santa murr wenn hasDearFinished fröhlich clientside da stehen dafür Serverside abfrage nutzen und das Ped happy stimmen
