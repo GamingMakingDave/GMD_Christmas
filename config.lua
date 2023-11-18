@@ -19,7 +19,7 @@ Config.SantaClausRandoms = 50
 -- DEER MISSION
 Config.DeerZones = {
     {
-        DeerCount = 5,
+        DeerCount = 1,
         DeerRandom = 50,
         DeerPedModel = "a_c_deer",
         DeerZonesRadius = 50.0,
