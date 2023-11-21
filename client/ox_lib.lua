@@ -18,7 +18,7 @@ function OpenGiftMenu()
                     Wait(1500)
                     showsubtitle("eintauschen desso mehr du mir Hilfst desso ein besseres Geschenk erhältst du von mir", 1500)
                     Wait(2000)
-                    CreateGiftBlips()
+                    GiftJob()
                 end,
             }
         }
