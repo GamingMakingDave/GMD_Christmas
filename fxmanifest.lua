@@ -9,6 +9,7 @@ data_file 'DLC_ITYP_REQUEST' 'stream/*.ytf'
 data_file 'DLC_ITYP_REQUEST' 'stream/*.ymt'
 data_file 'DLC_ITYP_REQUEST' 'stream/*ytd'
 data_file 'PED_METADATA_FILE' 'stream/peds.meta'
+data_file 'DLC_ITYP_REQUEST' 'stream/BzZzi_prop/bz_prop_gift2.ytyp'
 
 lua54 'yes'
 
