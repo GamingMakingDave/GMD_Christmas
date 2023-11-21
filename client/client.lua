@@ -4,15 +4,21 @@ xSound = exports.xsound
 SantaClausSpawned = false
 Musicplay = false
 PlayerInSearch = false
+PlayerInGiftJob = false
 PlayerSearching = {}
+
+EnteredRadius = false
 
 PlayerInGriftjob = false
 
 local PedCoords = {}
 local blips = {}
+local blipsGift = {}
+local GiftCoordsTbl = {}
 local EnteredRadius = false
 local showHelp = true
 local DeerCount = 0
+local GiftCount = 0
 local HelpDistance = 15
 local DeerFinished = false
 local HasUsedItem = false
@@ -132,7 +138,6 @@ function SpawnSearchDears()
         local shuffled = {}
 
         for i = 1, v.DeerCount do
-            print(#v.Coords)
             local randIndex = math.random(1, #v.Coords)
             table.insert(shuffled, v.Coords[randIndex])
             table.remove(v.Coords, randIndex)
@@ -235,7 +240,8 @@ function ShowCustomScaleform()
     end)
 
     local pedCoords = GetEntityCoords(PlayerPedId())
-    xSound:PlayUrlPos("Xmas1", "https://www.youtube.com/watch?v=maZQ3vURGVs", 1.0, pedCoords, false)
+    -- xSound:PlayUrlPos("Xmas1", "https://www.youtube.com/watch?v=maZQ3vURGVs", 1.0, pedCoords, false)
+    PlaySoundFrontend(-1, "HUD_AWARDS", "FLIGHT_SCHOOL_LESSON_PASSED", 1)
 
     Wait(5000)
     SetScaleformMovieAsNoLongerNeeded(scaleformHandle)
@@ -270,6 +276,7 @@ end, false)
 
 RegisterCommand("debugGift", function(source, args, rawCommand)
     GiftJob()
+    PlayerInGiftJob = true
 end, false)
 
 -- Giftjob
@@ -277,110 +284,147 @@ function GiftJob()
     for _, v in ipairs(Config.GiftJob) do
         local shuffled = {}
 
-        for i = 1, v.GiftEntryRandom do
-            print(#v.CoordsGift)
+        for i = 1, v.GiftCount do
             local randIndex = math.random(1, #v.CoordsGift)
+            print(randIndex)
             table.insert(shuffled, v.CoordsGift[randIndex])
             table.remove(v.CoordsGift, randIndex)
         end
 
         for i, CoordsGift in ipairs(shuffled) do
-            if v.EnableChristmasDoorAnim then
-                -- HIER ERROR FIXED COORDS NIL!!
-                local player = GetPlayerPed(-1)
-                FreezeEntityPosition(player, true)
-                SetEntityCoords(player, Coords.x, Coords.y, Coords.z, 0.0,0.0,0.0, false)
-                playAnim("timetable@jimmy@doorknock@", "knockdoor_idle", 3000)
-                Wait(1000)
-                SetEntityCoords(player, Coords.x + 1.0, Coords.y + 1.0, Coords.z, 0.0,0.0,0.0, false)
-                GiftPed = CreatePed(4, GetRandomPedHash(), Coords.x, Coords.y, Coords.z, Coords.h, false, true)
-                Wait(500)
-                playAnim()
+            GiftCoordsTbl = shuffled
+            local veccoords = Convert4to3(CoordsGift)
+            local blipGift = AddBlipForCoord(veccoords)
+            PlayerInGiftJob = true
+            SetBlipSprite(blipGift, 40)
+            SetBlipDisplay(blipGift, 4)
+            SetBlipScale(blipGift, 1.0)
+            SetBlipColour(blipGift, 2)
+            SetBlipAsShortRange(blipGift, true)
+            BeginTextCommandSetBlipName("STRING")
+            AddTextComponentString("Santas Giftjob")
+            EndTextCommandSetBlipName(blipGift)
+            table.insert(blipsGift, blipGift)
+            GiftCount = #shuffled
+            end
+        end
+    -- end
+end
+
+CreateThread(function()
+    while true do
+        Wait(5)
+
+        local pedCoords = GetEntityCoords(PlayerPedId())
+        local Ped = ESX.Game.GetClosestPed(pedCoords)
+        
+        for k, v in pairs(GiftCoordsTbl) do
+            local dist = #(pedCoords - vector3(v.x, v.y, v.z))
+            if PlayerInGiftJob then
+                if dist <= 5.0 then
+                    EnteredRadius = true
+                    if IsControlJustReleased(0, 38) then
+
+                        RequestModel(GetHashKey("a_f_m_prolhost_01"))
+                        while not HasModelLoaded("a_f_m_prolhost_01") do
+                            Wait(15)
+                        end
+            
+                        local player = PlayerPedId()
+                        local heading = v[4]
+                        local PedoffsetX = 1.0 * math.sin(math.rad(heading))
+                        local PedoffsetY = 1.0 * math.cos(math.rad(heading))
+                        local PlayeroffsetX = 1.0 * math.sin(math.rad(heading))
+                        local PlayoffsetY = 1.0 * math.cos(math.rad(heading))
+
+                        FreezeEntityPosition(player, true)
+                        SetEntityCoords(player, v.x, v.y, v.z-1, 0.0,0.0,0.0, false)
+                        SetEntityHeading(player, v[4])
+                        playAnimGift("timetable@jimmy@doorknock@", "knockdoor_idle", 3000)
+                        Wait(4000)
+                        SetEntityCoords(player, v.x + PlayeroffsetX , v.y - PlayoffsetY, v.z-1, 0.0,0.0,0.0, false)
+                        local giftPed = CreatePed(4, GetHashKey("a_f_m_prolhost_01"), v.x, v.y, v.z - 1.0, heading, false, true)
+                        TaskLookAtEntity(giftPed, player, -1, 0, 2, 1)
+                        TaskTurnPedToFaceEntity(giftPed, player, -1)
+                        Wait(500)
+
+                        PlayPedAmbientSpeechNative(giftPed, "GENERIC_HI", "Speech_Params_Force", 1)
+
+                        showsubtitle('Hi?', 1000)
+                        Wait(1500)
+                        local GiftmodelHash = GetHashKey("bz_prop_gift2")
+                        local bone = GetPedBoneIndex(PlayerPedId(), 57005)
+
+                        RequestModel(GiftmodelHash)
+                        while not HasModelLoaded(GiftmodelHash) do
+                            Wait(500)
+                        end
+                        print("loaded")
+                        playAnimGiveGift("bz@give_love@anim", "bz_give", 3500)
+
+                        GiftProp = CreateObject(GiftmodelHash, 0, 0, 0, 1, 1, 0)
+                        
+                        AttachEntityToEntity(GiftProp, PlayerPedId(), bone, 0.15, -0.08, -0.08, 10.0, -130.0, -80.0, 1, 1, 0, 0, 2, 1)
+                        FreezeEntityPosition(player, false)
+                        Wait(500)
+                        showsubtitle('Ein Geschenkt für mich WOW Danke!', 2000)
+                        Wait(1000)
+                        PlayPedAmbientSpeechNative(giftPed, "GENERIC_THANKS", "Speech_Params_Force", 1)
+                        Wait(2500)
+                        Citizen.InvokeNative(0xAE3CBE5BF394C9C9, Citizen.PointerValueIntInitialized(GiftProp))
+                        GiftProp = CreateObject(GiftmodelHash, 0, 0, 0, 1, 1, 0)
+                        AttachEntityToEntity(GiftProp, giftPed, GetPedBoneIndex(giftPed, 57005), 0.15, -0.08, -0.08, 10.0, -130.0, -80.0, 1, 1, 0, 0, 2, 1)
+                        TaskPlayAnim(giftPed, "bz@give_love@anim", "bz_give", 1.0, -1.0, 3000, 49, 1, false, false, false)
+                        Wait(5000)
+                        Citizen.InvokeNative(0xAE3CBE5BF394C9C9, Citizen.PointerValueIntInitialized(GiftProp))
+                        -- if GiftCount == 1 then
+                        --     GiftCount = 0
+                        --     PlayerInGiftJob = false
+                        --     PlayerInSearch = false
+                        --         for _, blipGift in ipairs(blipsGift) do
+                        --             RemoveBlip(blipGift)
+                        --             DeleteEntity(Ped)
+                        --         end
+                        -- else 
+                        --     GiftCount = GiftCount - 1
+                        --     for _, blipGift in ipairs(blipsGift) do
+                        --         RemoveBlip(blipGift)
+                        --         DeleteEntity(Ped)
+                        --     end
+                        -- end
+                    end
+                else
+Wait(6000)
+                end
             else
-
-                local blip = AddBlipForEntity(v.Coords)
-                SetBlipSprite(blip, 492)
-                SetBlipColour(blip, 1)
-                SetBlipScale(blip, 0.8)
-                SetBlipAsShortRange(blip, true)
-
-                local blipLabel = "Santas Giftjob"
-                AddTextEntry("BLIP_NAME", blipLabel)
-                BeginTextCommandSetBlipName("BLIP_NAME")
-                AddTextComponentSubstringPlayerName(blipLabel)
-                EndTextCommandSetBlipName(blip)
-                table.insert(blips, blip)
-                RandomCount = #shuffled
+              Wait(6000)  
+            end
+            if not EnteredRadius then
+                Wait(1000)
             end
         end
     end
+end)
+
+function Convert4to3(Coords)
+    return vector3(Coords.x, Coords.y, Coords.z)
 end
 
 
--- function GiftJob()
---     PlayerInGriftjob = true
-    
-
---         -- for i, Coords in ipairs(shuffled) do
---         --     if v.EnableChristmasDoorAnim then
---         --         Convert4to3(Coords)
---         --         local player = GetPlayerPed(-1)
---         --         FreezeEntityPosition(player, true)
---         --         SetEntityCoords(player, Coords.x, Coords.y, Coords.z, 0.0,0.0,0.0, false)
---         --         playAnim("timetable@jimmy@doorknock@", "knockdoor_idle", 3000)
---         --         Wait(1000)
---         --         SetEntityCoords(player, Coords.x + 1.0, Coords.y + 1.0, Coords.z, 0.0,0.0,0.0, false)
---         --         GiftPed = CreatePed(4, GetRandomPedHash(), Coords.x, Coords.y, Coords.z, Coords.h, false, true)
---         --         Wait(500)
---         --         playAnim()
---         --     else
-
---         --         local blip = AddBlipForEntity(v.Coords)
---         --         SetBlipSprite(blip, 492)
---         --         SetBlipColour(blip, 1)
---         --         SetBlipScale(blip, 0.8)
---         --         SetBlipAsShortRange(blip, true)
-
---         --         local blipLabel = "Santas Giftjob"
---         --         AddTextEntry("BLIP_NAME", blipLabel)
---         --         BeginTextCommandSetBlipName("BLIP_NAME")
---         --         AddTextComponentSubstringPlayerName(blipLabel)
---         --         EndTextCommandSetBlipName(blip)
---         --         table.insert(blips, blip)
---         --         RandomCount = #shuffled
---         --     end
---         -- end
---     end
--- end
-
-function GetRandomPedHash()
-    local randomIndex = math.random(1, #availablePeds)
-    return GetHashKey(availablePeds[randomIndex])
-end
-
-
--- RegisterCommand("vecconv", function(source, args, rawCommand)
---     for _, v in ipairs(Config.GiftJob) do
---     print("Vector4")
---     print(v.Coords)
---         for k, x in pairs(v.Coords) do
---             print(x)
---             print(Convert4to3(x))
-           
---         end
---     end
--- end, false)
-
--- function Convert4to3(Coords)
---     return vector3(Coords.x, Coords.y, Coords.z)
--- end
-
-
-function playAnim(animDict, animName, duration)
+function playAnimGift(animDict, animName, duration)
     RequestAnimDict(animDict)
     while not HasAnimDictLoaded(animDict) do 
         Wait(0) 
     end
-    TaskPlayAnim(GiftPed, animDict, animName, 1.0, -1.0, duration, 49, 1, false, false, false)
+    TaskPlayAnim(PlayerPedId(), animDict, animName, 1.0, -1.0, duration, 49, 1, false, false, false)
+    RemoveAnimDict(animDict)
+end
+
+function playAnimGiveGift(animDict, animName, duration)
+    RequestAnimDict(animDict)
+    while not HasAnimDictLoaded(animDict) do 
+        Wait(0) 
+    end
+    TaskPlayAnim(PlayerPedId(), animDict, animName, 1.0, -1.0, duration, 49, 1, false, false, false)
     RemoveAnimDict(animDict)
 end
