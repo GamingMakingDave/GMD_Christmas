@@ -20,7 +20,6 @@ Config.SantaClausRandoms = 50
 Config.DeerZones = {
     {
         DeerCount = 1,
-        DeerRandom = 50,
         DeerPedModel = "a_c_deer",
         DeerZonesRadius = 50.0,
         DeerFinishedItem = "christmas_stocking",
@@ -57,7 +56,8 @@ Config.GiftJob = {
     {
         EnableChristmasDoorAnim = true,
         GiftItemName = "christmas_giftbox",
-        GiftEntryRandom = 10,
+        GiftCount = 5,
+        GiftEntryRandom = 50,
         CoordsGift = {
             vector4(-935.000, -939.290, 2.145, 122.77),
             vector4(-913.426, -989.951, 2.150, 208.816),
