@@ -1,6 +1,21 @@
 ESX = exports['es_extended']:getSharedObject()
 
-ESX.RegisterUsableItem('christmas_stocking', function(source)
+xSound = exports.xsound
+
+RegisterCommand("playmusic", function(source, args, rawCommand)
+    if IsPlayerAceAllowed(source, "gmd.xmas") or Config.Debug then
+        xSound:PlayUrlPos("Xmas", Config.ChristmasMusicLink, 0.1, Config.ChristmasMarket, true)
+        xSound:Distance("Xmas", Config.ChristmasMarketRadius)
+    end
+end, false)
+
+RegisterCommand("stopmusic", function(source, args, rawCommand)
+    if IsPlayerAceAllowed(source, "gmd.xmas") or Config.Debug then
+        xSound:Destroy("Xmas")
+    end
+end, false)
+
+ESX.RegisterUsableItem('santas_sugar_stick', function(source)
     TriggerClientEvent('GMD_Christmas:usedDeerItem', source)
 end)
 
@@ -10,6 +25,14 @@ AddEventHandler('GMD_Christmas:giveXmasSearchItem', function()
     local xPlayer = ESX.GetPlayerFromId(source)
     xPlayer.addInventoryItem('santas_sugar_stick', 1)
 end)
+
+RegisterServerEvent('GMD_Christmas:giveXmasGiftTicket')
+AddEventHandler('GMD_Christmas:giveXmasGiftTicket', function()
+    local xPlayer = ESX.GetPlayerFromId(source)
+    local random = math.random(1, Config.GiftJob[1].GiftRandomTicket)
+    xPlayer.addInventoryItem('gold_ticket', random)
+end)
+
 
 RegisterServerEvent('GMD_Christmas:giveXmasSearchStocking')
 AddEventHandler('GMD_Christmas:giveXmasSearchStocking', function()
