@@ -19,7 +19,7 @@ Config.SantaClausRandoms = 50
 -- DEER MISSION
 Config.DeerZones = {
     {
-        DeerCount = 1,
+        DeerCount = 5,
         DeerPedModel = "a_c_deer",
         DeerZonesRadius = 50.0,
         DeerFinishedItem = "christmas_stocking",
@@ -30,9 +30,10 @@ Config.DeerZones = {
         DeerFinishedSugarItems = 10,
         DeerFinishedItems = {
             "sugar_cone",
-            "chocolate_santa_claus",
-            "peanut_butter_reindeer_cookies",
-            "gingerbread",
+            "santas_coffee",
+            "santas_wine",
+            "gingerbread"
+            -- here can you add own items! 
         },
 
         Coords = {
