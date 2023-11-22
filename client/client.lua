@@ -174,6 +174,8 @@ function SpawnSearchDears()
     end
 end
 
+
+
 CreateThread(function()
     while true do
         Wait(5)
@@ -392,26 +394,27 @@ CreateThread(function()
                     while not HasModelLoaded(GiftmodelHash) do
                         Wait(500)
                     end
-                    print("loaded")
-                    playAnimGiveGift("bz@give_love@anim", "bz_give", 3500)
 
+                    playAnimGiveGift("bz@give_love@anim", "bz_give", 1500)
+                    Wait(500)
                     GiftProp = CreateObject(GiftmodelHash, 0, 0, 0, 1, 1, 0)
                     
                     AttachEntityToEntity(GiftProp, PlayerPedId(), bone, 0.15, -0.08, -0.08, 10.0, -130.0, -80.0, 1, 1, 0, 0, 2, 1)
                     FreezeEntityPosition(player, false)
-                    Wait(500)
                     showsubtitle((Config.Language[Config.Local]['npc_thanks_for_gift']), 2000)
-                    Wait(1000)
+                    Wait(500)
                     PlayPedAmbientSpeechNative(giftPed, "GENERIC_THANKS", "Speech_Params_Force", 1)
-                    Wait(2500)
+                    Wait(500)
                     Citizen.InvokeNative(0xAE3CBE5BF394C9C9, Citizen.PointerValueIntInitialized(GiftProp))
                     GiftProp = CreateObject(GiftmodelHash, 0, 0, 0, 1, 1, 0)
                     AttachEntityToEntity(GiftProp, giftPed, GetPedBoneIndex(giftPed, 57005), 0.15, -0.08, -0.08, 10.0, -130.0, -80.0, 1, 1, 0, 0, 2, 1)
                     TaskPlayAnim(giftPed, "bz@give_love@anim", "bz_give", 1.0, -1.0, 3000, 49, 1, false, false, false)
-                    Wait(5000)
+                    Wait(3500)
                     Citizen.InvokeNative(0xAE3CBE5BF394C9C9, Citizen.PointerValueIntInitialized(GiftProp))
                     Wait(500)
+                    ClearPedTasks(giftPed)
                     SetEntityHeading(giftPed, v[4])
+                    Wait(500)
                     ClearPedTasks(PlayerPedId())
                     DeleteEntity(giftPed)
                     if GiftCount == 1 then
@@ -423,6 +426,7 @@ CreateThread(function()
                                 if distance < 10.0 then
                                     local entity = GetBlipInfoIdEntityIndex(blipGift)
                                     RemoveBlip(blipGift)
+                                    TriggerServerEvent('GMD_Christmas:giveXmasGiftTicket')
                                     break
                                 end
                             end
@@ -435,9 +439,9 @@ CreateThread(function()
                             if distance < 10.0 then
                                 local entity = GetBlipInfoIdEntityIndex(blipGift)
                                 RemoveBlip(blipGift)
+                                TriggerServerEvent('GMD_Christmas:giveXmasGiftTicket')
                                 break
                             end
-                            TriggerServerEvent('GMD_Christmas:giveXmasGiftTicket')
                         end
                     end
                 end
