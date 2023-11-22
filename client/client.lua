@@ -9,6 +9,8 @@ PlayerSearching = {}
 
 EnteredRadius = false
 
+DeleteNearBlip = false
+
 PlayerInGriftjob = false
 
 local PedCoords = {}
@@ -184,24 +186,72 @@ CreateThread(function()
             if dist <= HelpDistance then
                 showsubtitle('Du bist in der Nähe eines meines Rentiers halte deine Augen offen', 2000)
 
-                if dist <= 5.0 then
+                if dist <= 10.0 then
                     showsubtitle('Du siehst mein Rentrier nutze das ITEM was ich dir gegeben habe!', 2000)
                     if PlayerInSearch and HasUsedItem then
+                        DeleteNearBlip =true
                         if DeerCount == 1 then
                             DeerCount = 0
                             PlayerInSearch = false
+
+                            local playerPos = GetEntityCoords(PlayerPedId(), false)
+
+                            if DeleteNearBlip then
                                 for _, blip in ipairs(blips) do
-                                    RemoveBlip(blip)
-                                    DeleteEntity(Ped)
+                                    local blipPos = GetBlipCoords(blip)
+                                    local distance = Vdist(playerPos.x, playerPos.y, playerPos.z, blipPos.x, blipPos.y, blipPos.z)
+                                    if distance < 10.0 then
+                                        local entity = GetBlipInfoIdEntityIndex(blip)
+                                        RemoveBlip(blip)
+                                        Wait(500)
+                                        RequestNamedPtfxAsset("scr_rcbarry1")
+                                        while not HasNamedPtfxAssetLoaded("scr_rcbarry1") do
+                                            Wait(1)
+                                        end
+
+                                        UseParticleFxAsset("scr_rcbarry1")
+                                        StartParticleFxLoopedOnEntity("scr_alien_teleport", Ped, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, false, false, false, false)
+                                        Wait(2000)
+                                        DeleteEntity(entity)
+                                        DeleteNearBlip = false
+                                        HasUsedItem = false
+                                        break
+                                    end
                                 end
+                            end
                             ShowCustomScaleform()
                             Wait(1000)
                             TriggerServerEvent('GMD_Christmas:giveXmasSearchStocking')
                         else 
+
                             DeerCount = DeerCount - 1
+
+                            local playerPos = GetEntityCoords(PlayerPedId(), false)
+
                             for _, blip in ipairs(blips) do
-                                RemoveBlip(blip)
-                                DeleteEntity(Ped)
+                                local blipPos = GetBlipCoords(blip)
+                                local distance = Vdist(playerPos.x, playerPos.y, playerPos.z, blipPos.x, blipPos.y, blipPos.z)
+                                if DeleteNearBlip then
+                                    if distance < 10.0 then
+                                        local entity = GetBlipInfoIdEntityIndex(blip)
+                                        RemoveBlip(blip)
+                                        Wait(500)
+                                        RequestNamedPtfxAsset("scr_rcbarry1")
+                                        while not HasNamedPtfxAssetLoaded("scr_rcbarry1") do
+                                            Wait(1)
+                                        end
+
+                                        UseParticleFxAsset("scr_rcbarry1")
+                                        StartParticleFxLoopedOnEntity("scr_alien_teleport", Ped, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, false, false, false, false)
+                                        Wait(2000)
+                                        DeleteEntity(entity)
+                                        showsubtitle('Ho ho Ho HO, du hast eins meiner Rentiere gefunden dir fehlen noch '..DeerCount..' meiner Rentiere!', 2000)
+                                        Wait(2500)
+                                        DeleteNearBlip = false
+                                        HasUsedItem = false
+                                        break
+                                    end
+                                end
                             end
                         end
                     end
@@ -233,14 +283,13 @@ function ShowCustomScaleform()
     EndScaleformMovieMethod()
 
     CreateThread(function()
-        while eventActive do  -- Schleife läuft nur, wenn das Ereignis aktiv ist
+        while eventActive do
             Wait(0)
             DrawScaleformMovieFullscreen(scaleformHandle, 255, 255, 255, 255)
         end
     end)
 
     local pedCoords = GetEntityCoords(PlayerPedId())
-    -- xSound:PlayUrlPos("Xmas1", "https://www.youtube.com/watch?v=maZQ3vURGVs", 1.0, pedCoords, false)
     PlaySoundFrontend(-1, "HUD_AWARDS", "FLIGHT_SCHOOL_LESSON_PASSED", 1)
 
     Wait(5000)
@@ -317,90 +366,83 @@ CreateThread(function()
 
         local pedCoords = GetEntityCoords(PlayerPedId())
         local Ped = ESX.Game.GetClosestPed(pedCoords)
-        
         for k, v in pairs(GiftCoordsTbl) do
             local dist = #(pedCoords - vector3(v.x, v.y, v.z))
-            if PlayerInGiftJob then
-                if dist <= 5.0 then
-                    EnteredRadius = true
-                    if IsControlJustReleased(0, 38) then
+            if dist <= 5.0 then
+                if IsControlJustReleased(0, 38) then
 
-                        RequestModel(GetHashKey("a_f_m_prolhost_01"))
-                        while not HasModelLoaded("a_f_m_prolhost_01") do
-                            Wait(15)
-                        end
-            
-                        local player = PlayerPedId()
-                        local heading = v[4]
-                        local PedoffsetX = 1.0 * math.sin(math.rad(heading))
-                        local PedoffsetY = 1.0 * math.cos(math.rad(heading))
-                        local PlayeroffsetX = 1.0 * math.sin(math.rad(heading))
-                        local PlayoffsetY = 1.0 * math.cos(math.rad(heading))
-
-                        FreezeEntityPosition(player, true)
-                        SetEntityCoords(player, v.x, v.y, v.z-1, 0.0,0.0,0.0, false)
-                        SetEntityHeading(player, v[4])
-                        playAnimGift("timetable@jimmy@doorknock@", "knockdoor_idle", 3000)
-                        Wait(4000)
-                        SetEntityCoords(player, v.x + PlayeroffsetX , v.y - PlayoffsetY, v.z-1, 0.0,0.0,0.0, false)
-                        local giftPed = CreatePed(4, GetHashKey("a_f_m_prolhost_01"), v.x, v.y, v.z - 1.0, heading, false, true)
-                        TaskLookAtEntity(giftPed, player, -1, 0, 2, 1)
-                        TaskTurnPedToFaceEntity(giftPed, player, -1)
-                        Wait(500)
-
-                        PlayPedAmbientSpeechNative(giftPed, "GENERIC_HI", "Speech_Params_Force", 1)
-
-                        showsubtitle('Hi?', 1000)
-                        Wait(1500)
-                        local GiftmodelHash = GetHashKey("bz_prop_gift2")
-                        local bone = GetPedBoneIndex(PlayerPedId(), 57005)
-
-                        RequestModel(GiftmodelHash)
-                        while not HasModelLoaded(GiftmodelHash) do
-                            Wait(500)
-                        end
-                        print("loaded")
-                        playAnimGiveGift("bz@give_love@anim", "bz_give", 3500)
-
-                        GiftProp = CreateObject(GiftmodelHash, 0, 0, 0, 1, 1, 0)
-                        
-                        AttachEntityToEntity(GiftProp, PlayerPedId(), bone, 0.15, -0.08, -0.08, 10.0, -130.0, -80.0, 1, 1, 0, 0, 2, 1)
-                        FreezeEntityPosition(player, false)
-                        Wait(500)
-                        showsubtitle('Ein Geschenkt für mich WOW Danke!', 2000)
-                        Wait(1000)
-                        PlayPedAmbientSpeechNative(giftPed, "GENERIC_THANKS", "Speech_Params_Force", 1)
-                        Wait(2500)
-                        Citizen.InvokeNative(0xAE3CBE5BF394C9C9, Citizen.PointerValueIntInitialized(GiftProp))
-                        GiftProp = CreateObject(GiftmodelHash, 0, 0, 0, 1, 1, 0)
-                        AttachEntityToEntity(GiftProp, giftPed, GetPedBoneIndex(giftPed, 57005), 0.15, -0.08, -0.08, 10.0, -130.0, -80.0, 1, 1, 0, 0, 2, 1)
-                        TaskPlayAnim(giftPed, "bz@give_love@anim", "bz_give", 1.0, -1.0, 3000, 49, 1, false, false, false)
-                        Wait(5000)
-                        Citizen.InvokeNative(0xAE3CBE5BF394C9C9, Citizen.PointerValueIntInitialized(GiftProp))
-                        -- if GiftCount == 1 then
-                        --     GiftCount = 0
-                        --     PlayerInGiftJob = false
-                        --     PlayerInSearch = false
-                        --         for _, blipGift in ipairs(blipsGift) do
-                        --             RemoveBlip(blipGift)
-                        --             DeleteEntity(Ped)
-                        --         end
-                        -- else 
-                        --     GiftCount = GiftCount - 1
-                        --     for _, blipGift in ipairs(blipsGift) do
-                        --         RemoveBlip(blipGift)
-                        --         DeleteEntity(Ped)
-                        --     end
-                        -- end
+                    RequestModel(GetHashKey("a_f_m_prolhost_01"))
+                    while not HasModelLoaded("a_f_m_prolhost_01") do
+                        Wait(15)
                     end
-                else
-Wait(6000)
+        
+                    local player = PlayerPedId()
+                    local heading = v[4]
+                    local PedoffsetX = 1.0 * math.sin(math.rad(heading))
+                    local PedoffsetY = 1.0 * math.cos(math.rad(heading))
+                    local PlayeroffsetX = 1.0 * math.sin(math.rad(heading))
+                    local PlayoffsetY = 1.0 * math.cos(math.rad(heading))
+
+                    FreezeEntityPosition(player, true)
+                    SetEntityCoords(player, v.x, v.y, v.z-1, 0.0,0.0,0.0, false)
+                    SetEntityHeading(player, v[4])
+                    playAnimGift("timetable@jimmy@doorknock@", "knockdoor_idle", 3000)
+                    Wait(4000)
+                    SetEntityCoords(player, v.x + PlayeroffsetX , v.y - PlayoffsetY, v.z-1, 0.0,0.0,0.0, false)
+                    local giftPed = CreatePed(4, GetHashKey("a_f_m_prolhost_01"), v.x, v.y, v.z - 1.0, heading, false, true)
+                    TaskLookAtEntity(giftPed, player, -1, 0, 2, 1)
+                    TaskTurnPedToFaceEntity(giftPed, player, -1)
+                    Wait(500)
+
+                    PlayPedAmbientSpeechNative(giftPed, "GENERIC_HI", "Speech_Params_Force", 1)
+
+                    showsubtitle('Hi?', 1000)
+                    Wait(1500)
+                    local GiftmodelHash = GetHashKey("bz_prop_gift2")
+                    local bone = GetPedBoneIndex(PlayerPedId(), 57005)
+
+                    RequestModel(GiftmodelHash)
+                    while not HasModelLoaded(GiftmodelHash) do
+                        Wait(500)
+                    end
+                    print("loaded")
+                    playAnimGiveGift("bz@give_love@anim", "bz_give", 3500)
+
+                    GiftProp = CreateObject(GiftmodelHash, 0, 0, 0, 1, 1, 0)
+                    
+                    AttachEntityToEntity(GiftProp, PlayerPedId(), bone, 0.15, -0.08, -0.08, 10.0, -130.0, -80.0, 1, 1, 0, 0, 2, 1)
+                    FreezeEntityPosition(player, false)
+                    Wait(500)
+                    showsubtitle('Ein Geschenkt für mich WOW Danke!', 2000)
+                    Wait(1000)
+                    PlayPedAmbientSpeechNative(giftPed, "GENERIC_THANKS", "Speech_Params_Force", 1)
+                    Wait(2500)
+                    Citizen.InvokeNative(0xAE3CBE5BF394C9C9, Citizen.PointerValueIntInitialized(GiftProp))
+                    GiftProp = CreateObject(GiftmodelHash, 0, 0, 0, 1, 1, 0)
+                    AttachEntityToEntity(GiftProp, giftPed, GetPedBoneIndex(giftPed, 57005), 0.15, -0.08, -0.08, 10.0, -130.0, -80.0, 1, 1, 0, 0, 2, 1)
+                    TaskPlayAnim(giftPed, "bz@give_love@anim", "bz_give", 1.0, -1.0, 3000, 49, 1, false, false, false)
+                    Wait(5000)
+                    Citizen.InvokeNative(0xAE3CBE5BF394C9C9, Citizen.PointerValueIntInitialized(GiftProp))
+                    Wait(500)
+                    SetEntityHeading(giftPed, v[4])
+                    ClearPedTasks(PlayerPedId())
+                    DeleteEntity(giftPed)
+                    if GiftCount == 1 then
+                        GiftCount = 0
+                        -- PlayerInGiftJob = false
+                        -- PlayerInSearch = false
+                            for _, blipGift in ipairs(blipsGift) do
+                                RemoveBlip(blipGift)
+                                -- DeleteEntity(Ped)
+                            end
+                    else 
+                        GiftCount = GiftCount - 1
+                        for _, blipGift in ipairs(blipsGift) do
+                            RemoveBlip(blipGift)
+                            -- DeleteEntity(Ped)
+                        end
+                    end
                 end
-            else
-              Wait(6000)  
-            end
-            if not EnteredRadius then
-                Wait(1000)
             end
         end
     end
