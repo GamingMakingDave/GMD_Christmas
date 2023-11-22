@@ -87,23 +87,158 @@ Config.GiftJob = {
 -- LANGUAGES
 Config.Language = {
     ['de'] = {
-        ['santa_helptext'] = 'Drücke ~INPUT_PICKUP~ um mir zu helfen.',
-        ['santa_distance_massage'] = 'Mein Rentier ist in der nähe halte deine Augen auf!',
-        ['has_found_deer'] = 'Nutze nun das item was ich dir gegeben habe',
-        ['santa_found_massage'] = 'Ho ho Ho HO, du hast eins meiner Rentiere gefunden dir fehlen noch %s meiner Rentiere!',
+        ['santa_helptext'] = 'Drücke ~INPUT_PICKUP~, um mir zu helfen.',
+        ['santa_distance_massage'] = 'Mein Rentier ist in der Nähe, halte deine Augen offen!',
+        ['has_found_deer'] = 'Benutze nun das Item, das ich dir gegeben habe.',
+        ['santa_found_massage'] = 'Ho ho Ho HO, du hast eins meiner Rentiere gefunden. Dir fehlen noch %s meiner Rentiere!',
+
+        -- Deer Searching
+        ['DeerSearch_1'] = 'Mir sind meine Rentiere entlaufen und mit euren Geschenken abgehauen!!',
+        ['DeerSearch_2'] = 'Kannst du sie suchen helfen?',
+        ['DeerSearch_3'] = 'Ansonsten war es das mit dem Weihnachtsfest und ihr müsst ohne Geschenke auskommen!',
+        ['DeerSearch_4'] = 'Hier hast du von mir eine Zuckerstange. Nutze dies, sobald du mein Rentier nah bist!',
 
         -- Scaleform
         ['scaleform_big_text'] = 'MISSION PASSED',
-        ['scaleform_small_text'] = 'HO ho HO... Du hast all meine Rentiere gefunden, hier ein Dankeschön für deine Mühe!',
+        ['scaleform_small_text'] = 'HO ho HO... Du hast all meine Rentiere gefunden. Hier ein Dankeschön für deine Mühe!',
 
         -- Giftjob
         ['npc_hello'] = 'Hi?',
-        ['npc_thanks_for_gift'] = 'Ein Geschenk? Für mich Danke dir!',
+        ['npc_thanks_for_gift'] = 'Ein Geschenk? Für mich? Danke dir!',
 
         -- Item used
         ['used_sugar_cone'] = 'Du hast eine Zuckerstange gegessen.',
-        ['used_gingerbread'] = 'Du hast ein Lebkuchen gegessen.',
-        ['santas_coffee'] = 'Du hast Santas Kaffee getrunken, spürst du diese Energie?',
-        ['santas_wine'] = 'Du hast Santas Wein getrunken, mensch ist der Start , dass erklärt seine Rotenbacken! Hucks'
+        ['used_gingerbread'] = 'Du hast einen Lebkuchen gegessen.',
+        ['santas_coffee'] = 'Du hast Santas Kaffee getrunken. Spürst du diese Energie?',
+        ['santas_wine'] = 'Du hast Santas Wein getrunken. Mensch, ist der stark. Das erklärt seine roten Backen! Hucks',
+
+        -- Oxlib Menu
+        ['thanks_oxlib'] = 'Danke dir nochmals für deine Hilfe!',
+        ['thanks_1_oxlib'] = 'Wenn du magst, könntest du mir helfen, Geschenke auszuliefern?',
+        ['thanks_2_oxlib'] = 'Ich belohne dich mit goldenen Tickets.'
+    },
+    ['en'] = {
+        ['santa_helptext'] = 'Press ~INPUT_PICKUP~ to help me.',
+        ['santa_distance_massage'] = 'My reindeer is nearby, keep your eyes open!',
+        ['has_found_deer'] = 'Now use the item I gave you.',
+        ['santa_found_massage'] = 'Ho ho Ho HO, you found one of my reindeers. You still need %s more of my reindeers!',
+
+        -- Deer Searching
+        ['DeerSearch_1'] = 'My reindeers have escaped and run away with your gifts!!',
+        ['DeerSearch_2'] = 'Can you help me find them?',
+        ['DeerSearch_3'] = 'Otherwise, Christmas is over, and you\'ll have to do without gifts!',
+        ['DeerSearch_4'] = 'Here\'s a candy cane from me. Use it when you\'re near my reindeer!',
+
+        -- Scaleform
+        ['scaleform_big_text'] = 'MISSION PASSED',
+        ['scaleform_small_text'] = 'HO ho HO... You found all my reindeers. Here\'s a thank you for your effort!',
+
+        -- Gift job
+        ['npc_hello'] = 'Hi?',
+        ['npc_thanks_for_gift'] = 'A gift? For me? Thank you!',
+
+        -- Item used
+        ['used_sugar_cone'] = 'You ate a candy cane.',
+        ['used_gingerbread'] = 'You ate a gingerbread cookie.',
+        ['santas_coffee'] = 'You drank Santa\'s coffee. Can you feel that energy?',
+        ['santas_wine'] = 'You drank Santa\'s wine. Wow, that\'s a kick. That explains his rosy cheeks! Hucks',
+
+        -- Oxlib Menu
+        ['thanks_oxlib'] = 'Thank you again for your help!',
+        ['thanks_1_oxlib'] = 'If you like, could you help me deliver gifts?',
+        ['thanks_2_oxlib'] = 'I\'ll reward you with Golden Tickets.'
+    },
+    ['sp'] = {
+        ['santa_helptext'] = 'Presiona ~INPUT_PICKUP~ para ayudarme.',
+        ['santa_distance_massage'] = 'Mi reno está cerca, ¡mantén los ojos abiertos!',
+        ['has_found_deer'] = 'Ahora usa el objeto que te di.',
+        ['santa_found_massage'] = 'Ho ho Ho HO, encontraste uno de mis renos. ¡Todavía te faltan %s de mis renos!',
+    
+        -- Deer Searching
+        ['DeerSearch_1'] = '¡Mis renos escaparon y huyeron con tus regalos!',
+        ['DeerSearch_2'] = '¿Puedes ayudarme a encontrarlos?',
+        ['DeerSearch_3'] = 'De lo contrario, la Navidad ha terminado y tendrás que prescindir de regalos.',
+        ['DeerSearch_4'] = 'Aquí tienes un bastón de caramelo. ¡Úsalo cuando estés cerca de mi reno!',
+    
+        -- Scaleform
+        ['scaleform_big_text'] = 'MISIÓN SUPERADA',
+        ['scaleform_small_text'] = 'HO ho HO... Encontraste a todos mis renos. ¡Aquí tienes un agradecimiento por tu esfuerzo!',
+    
+        -- Gift job
+        ['npc_hello'] = '¿Hola?',
+        ['npc_thanks_for_gift'] = '¿Un regalo? ¿Para mí? ¡Gracias!',
+    
+        -- Item used
+        ['used_sugar_cone'] = 'Comiste un bastón de caramelo.',
+        ['used_gingerbread'] = 'Comiste una galleta de jengibre.',
+        ['santas_coffee'] = 'Bebiste el café de Santa. ¿Sientes esa energía?',
+        ['santas_wine'] = 'Bebiste el vino de Santa. Vaya, eso da un golpe. ¡Eso explica sus mejillas sonrosadas! Hucks',
+    
+        -- Oxlib Menu
+        ['thanks_oxlib'] = '¡Gracias de nuevo por tu ayuda!',
+        ['thanks_1_oxlib'] = 'Si quieres, ¿podrías ayudarme a entregar regalos?',
+        ['thanks_2_oxlib'] = 'Te recompensaré con Golden Tickets.'
+    },
+    ['ru'] = {
+        ['santa_helptext'] = 'Нажмите ~INPUT_PICKUP~, чтобы мне помочь.',
+        ['santa_distance_massage'] = 'Мой олень рядом, держи глаза открытыми!',
+        ['has_found_deer'] = 'Теперь используй предмет, который я тебе дал.',
+        ['santa_found_massage'] = 'Хо-хо-хо, ты нашел одного из моих оленей. Тебе все еще нужно %s моих оленей!',
+    
+        -- Deer Searching
+        ['DeerSearch_1'] = 'Мои олени сбежали и унесли ваши подарки!',
+        ['DeerSearch_2'] = 'Можешь помочь мне их найти?',
+        ['DeerSearch_3'] = 'В противном случае Рождество закончено, и вам придется обойтись без подарков!',
+        ['DeerSearch_4'] = 'Вот тебе леденец от меня. Используй его, когда ты близок к моему оленю!',
+    
+        -- Scaleform
+        ['scaleform_big_text'] = 'ЗАДАЧА ВЫПОЛНЕНА',
+        ['scaleform_small_text'] = 'Хо-хо-хо... Ты нашел всех моих оленей. Вот тебе спасибо за твои усилия!',
+    
+        -- Gift job
+        ['npc_hello'] = 'Привет?',
+        ['npc_thanks_for_gift'] = 'Подарок? Для меня? Спасибо!',
+    
+        -- Item used
+        ['used_sugar_cone'] = 'Ты поел леденец.',
+        ['used_gingerbread'] = 'Ты поел пряник.',
+        ['santas_coffee'] = 'Ты выпил кофе Санты. Чувствуешь эту энергию?',
+        ['santas_wine'] = 'Ты выпил вино Санты. Вау, это удар, это объясняет его румяные щеки! Hucks',
+    
+        -- Oxlib Menu
+        ['thanks_oxlib'] = 'Спасибо еще раз за твою помощь!',
+        ['thanks_1_oxlib'] = 'Если хочешь, можешь помочь мне разносить подарки?',
+        ['thanks_2_oxlib'] = 'Я вознагражу тебя Золотыми билетами.'
+    },
+    ['fr'] = {
+        ['santa_helptext'] = 'Appuyez sur ~INPUT_PICKUP~ pour m\'aider.',
+        ['santa_distance_massage'] = 'Mon renne est à proximité, gardez les yeux ouverts !',
+        ['has_found_deer'] = 'Utilisez maintenant l\'objet que je vous ai donné.',
+        ['santa_found_massage'] = 'Ho ho Ho HO, vous avez trouvé l\'un de mes rennes. Il vous manque encore %s de mes rennes !',
+
+        -- Deer Searching
+        ['DeerSearch_1'] = 'Mes rennes se sont échappés et ont fui avec vos cadeaux !',
+        ['DeerSearch_2'] = 'Pouvez-vous m\'aider à les trouver ?',
+        ['DeerSearch_3'] = 'Sinon, Noël est fini, et vous devrez vous passer de cadeaux !',
+        ['DeerSearch_4'] = 'Voici une canne en bonbon de ma part. Utilisez-la lorsque vous êtes près de mon renne !',
+
+        -- Scaleform
+        ['scaleform_big_text'] = 'MISSION RÉUSSIE',
+        ['scaleform_small_text'] = 'HO ho HO... Vous avez trouvé tous mes rennes. Voici un merci pour vos efforts !',
+
+        -- Gift job
+        ['npc_hello'] = 'Salut ?',
+        ['npc_thanks_for_gift'] = 'Un cadeau ? Pour moi ? Merci !',
+
+        -- Item used
+        ['used_sugar_cone'] = 'Vous avez mangé une canne en bonbon.',
+        ['used_gingerbread'] = 'Vous avez mangé un biscuit en pain d\'épice.',
+        ['santas_coffee'] = 'Vous avez bu le café du Père Noël. Sentez-vous cette énergie ?',
+        ['santas_wine'] = 'Vous avez bu le vin du Père Noël. Wow, c\'est un coup, cela explique ses joues roses ! Hucks',
+
+        -- Oxlib Menu
+        ['thanks_oxlib'] = 'Merci encore pour votre aide !',
+        ['thanks_1_oxlib'] = 'Si vous le souhaitez, pourriez-vous m\'aider à livrer des cadeaux ?',
+        ['thanks_2_oxlib'] = 'Je vous récompenserai avec des billets dorés.'
     }
 }
