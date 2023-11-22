@@ -163,7 +163,7 @@ function SpawnSearchDears()
             SetBlipScale(blip, 0.8)
             SetBlipAsShortRange(blip, true)
 
-            local blipLabel = "Santas Spur"
+            local blipLabel = "Santas Deer"
             AddTextEntry("BLIP_NAME", blipLabel)
             BeginTextCommandSetBlipName("BLIP_NAME")
             AddTextComponentSubstringPlayerName(blipLabel)
@@ -184,10 +184,10 @@ CreateThread(function()
         if GetEntityModel(Ped) == GetHashKey('a_c_deer') then
             local dist = #(pedCoords - GetEntityCoords(Ped))
             if dist <= HelpDistance then
-                showsubtitle('Du bist in der Nähe eines meines Rentiers halte deine Augen offen', 2000)
+                showsubtitle((Config.Language[Config.Local]['santa_distance_massage']), 2000)
 
                 if dist <= 10.0 then
-                    showsubtitle('Du siehst mein Rentrier nutze das ITEM was ich dir gegeben habe!', 2000)
+                    showsubtitle((Config.Language[Config.Local]['has_found_deer']), 2000)
                     if PlayerInSearch and HasUsedItem then
                         DeleteNearBlip =true
                         if DeerCount == 1 then
@@ -245,7 +245,7 @@ CreateThread(function()
                                         StartParticleFxLoopedOnEntity("scr_alien_teleport", Ped, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, false, false, false, false)
                                         Wait(2000)
                                         DeleteEntity(entity)
-                                        showsubtitle('Ho ho Ho HO, du hast eins meiner Rentiere gefunden dir fehlen noch '..DeerCount..' meiner Rentiere!', 2000)
+                                        showsubtitle(Config.Language[Config.Locale]['santa_found_massage']:format(DeerCount), 2000)
                                         Wait(2500)
                                         DeleteNearBlip = false
                                         HasUsedItem = false
@@ -277,8 +277,8 @@ function ShowCustomScaleform()
     end
 
     BeginScaleformMovieMethod(scaleformHandle, "SHOW_SHARD_WASTED_MP_MESSAGE")
-    PushScaleformMovieMethodParameterString("MISSION PASSED")
-    PushScaleformMovieMethodParameterString("HO ho HO... Du hast all meine Rentiere gefunden, hier ein Dankeschön für deine Mühe!")
+    PushScaleformMovieMethodParameterString((Config.Language[Config.Local]['scaleform_big_text']))
+    PushScaleformMovieMethodParameterString((Config.Language[Config.Local]['scaleform_small_text']))
     PushScaleformMovieMethodParameterInt(5)
     EndScaleformMovieMethod()
 
@@ -304,29 +304,16 @@ function showsubtitle(text, time)
     DrawSubtitleTimed(time, 1)
 end
 
--- Commands
-RegisterCommand("playmusic", function(source, args, rawCommand)
-    xSound:PlayUrlPos("Xmas", Config.ChristmasMusicLink, 0.1, Config.ChristmasMarket, true)
-    xSound:Distance("Xmas", Config.ChristmasMarketRadius)
-end, false)
+if Config.Debug then
+    RegisterCommand("debugDeer", function(source, args, rawCommand)
+        SpawnSearchDears()
+    end, false)
 
-RegisterCommand("stopmusic", function(source, args, rawCommand)
-    xSound:Destroy("Xmas")
-end, false)
-
-RegisterCommand("scale", function(source, args, rawCommand)
-    ShowCustomScaleform('MISSION PASSED', 'YOU FIND ALL DEERS', 6000)
-end, false)
-
-
-RegisterCommand("debugDeer", function(source, args, rawCommand)
-    SpawnSearchDears()
-end, false)
-
-RegisterCommand("debugGift", function(source, args, rawCommand)
-    GiftJob()
-    PlayerInGiftJob = true
-end, false)
+    RegisterCommand("debugGift", function(source, args, rawCommand)
+        GiftJob()
+        PlayerInGiftJob = true
+    end, false)
+end
 
 -- Giftjob
 function GiftJob()
@@ -355,9 +342,8 @@ function GiftJob()
             EndTextCommandSetBlipName(blipGift)
             table.insert(blipsGift, blipGift)
             GiftCount = #shuffled
-            end
         end
-    -- end
+    end
 end
 
 CreateThread(function()
@@ -366,6 +352,7 @@ CreateThread(function()
 
         local pedCoords = GetEntityCoords(PlayerPedId())
         local Ped = ESX.Game.GetClosestPed(pedCoords)
+
         for k, v in pairs(GiftCoordsTbl) do
             local dist = #(pedCoords - vector3(v.x, v.y, v.z))
             if dist <= 5.0 then
@@ -396,7 +383,7 @@ CreateThread(function()
 
                     PlayPedAmbientSpeechNative(giftPed, "GENERIC_HI", "Speech_Params_Force", 1)
 
-                    showsubtitle('Hi?', 1000)
+                    showsubtitle((Config.Language[Config.Local]['npc_hello']), 1000)
                     Wait(1500)
                     local GiftmodelHash = GetHashKey("bz_prop_gift2")
                     local bone = GetPedBoneIndex(PlayerPedId(), 57005)
@@ -413,7 +400,7 @@ CreateThread(function()
                     AttachEntityToEntity(GiftProp, PlayerPedId(), bone, 0.15, -0.08, -0.08, 10.0, -130.0, -80.0, 1, 1, 0, 0, 2, 1)
                     FreezeEntityPosition(player, false)
                     Wait(500)
-                    showsubtitle('Ein Geschenkt für mich WOW Danke!', 2000)
+                    showsubtitle((Config.Language[Config.Local]['npc_thanks_for_gift']), 2000)
                     Wait(1000)
                     PlayPedAmbientSpeechNative(giftPed, "GENERIC_THANKS", "Speech_Params_Force", 1)
                     Wait(2500)
@@ -429,17 +416,28 @@ CreateThread(function()
                     DeleteEntity(giftPed)
                     if GiftCount == 1 then
                         GiftCount = 0
-                        -- PlayerInGiftJob = false
-                        -- PlayerInSearch = false
                             for _, blipGift in ipairs(blipsGift) do
-                                RemoveBlip(blipGift)
-                                -- DeleteEntity(Ped)
+                                local blipPos = GetBlipCoords(blipGift)
+                                local distance = Vdist(pedCoords.x, pedCoords.y, pedCoords.z, blipPos.x, blipPos.y, blipPos.z)
+
+                                if distance < 10.0 then
+                                    local entity = GetBlipInfoIdEntityIndex(blipGift)
+                                    RemoveBlip(blipGift)
+                                    break
+                                end
                             end
                     else 
                         GiftCount = GiftCount - 1
                         for _, blipGift in ipairs(blipsGift) do
-                            RemoveBlip(blipGift)
-                            -- DeleteEntity(Ped)
+                            local blipPos = GetBlipCoords(blipGift)
+                            local distance = Vdist(pedCoords.x, pedCoords.y, pedCoords.z, blipPos.x, blipPos.y, blipPos.z)
+
+                            if distance < 10.0 then
+                                local entity = GetBlipInfoIdEntityIndex(blipGift)
+                                RemoveBlip(blipGift)
+                                break
+                            end
+                            TriggerServerEvent('GMD_Christmas:giveXmasGiftTicket')
                         end
                     end
                 end
