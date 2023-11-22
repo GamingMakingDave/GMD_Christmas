@@ -1,16 +1,1 @@
-Man kann 1 mission starten das sind rentiere finden nach dieser mission ist erst der geschenke verteiler job verfügbar
-(Hier müsste man denn serverside den check holen und nur beim spieler der die mission abgeschlossen hat der santa nicht mehr taumelt sondern feiert oder jubelt) 
-Zu anderen ohne missions steht santa traurig da, ist santa froh und du lieferst seine geschenke aus bekommst du tickets die tickets können bei einem npc oder teamler 
-eingetauscht werden wenn, nur über ox_lib und wieviel lose was für ein gewinn sind....
-
-
-Das einsammeln der tiere passiert über ein Item was man mehrmals wie dem DeerCount  benutzen kann kommt santa synced und holt das deer persönlich ab mit eine nachricht wie 
-HOHO bringe mir noch meine restlichen 4 (Bei config DeerCount 5) wie im helloween und diese nachricht nur beim auslöser spieler andere sehen nur santa und bekommen ein meldung
-
-HOHOHO Fröhliche Weihnachten wenn er sein rentier abholt.
-
-Andere spieler können nur das rentier sehen aber nicht den Blip nur der auslöser kann den blip sehen, (Ortung wenn es nativ gibt (Sichtweite abfrage)) 
-das sich der santa via subtext meldet wenn man inrichtung des rentiers schaut um es spannender zu machen als sichtfeld könnte ein fernglas zum einsatz kommen und wenn
-man das ped eine bestimmte zeit beobachtet sieht man santa wie er das rentier einsammelt.
-
-Santa murr wenn hasDearFinished fröhlich clientside da stehen dafür Serverside abfrage nutzen und das Ped happy stimmen
+testen
