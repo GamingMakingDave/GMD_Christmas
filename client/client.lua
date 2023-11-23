@@ -18,6 +18,7 @@ local blips = {}
 local blipsGift = {}
 local GiftCoordsTbl = {}
 local EnteredRadius = false
+local EnteredGiftRadius = false
 local showHelp = true
 local DeerCount = 0
 local GiftCount = 0
@@ -176,98 +177,98 @@ end
 
 
 
-CreateThread(function()
-    while true do
-        Wait(5)
+-- CreateThread(function()
+--     while true do
+--         Wait(5)
 
-        local pedCoords = GetEntityCoords(PlayerPedId())
-        local Ped = ESX.Game.GetClosestPed(pedCoords)
+--         local pedCoords = GetEntityCoords(PlayerPedId())
+--         local Ped = ESX.Game.GetClosestPed(pedCoords)
         
-        if GetEntityModel(Ped) == GetHashKey('a_c_deer') then
-            local dist = #(pedCoords - GetEntityCoords(Ped))
-            if dist <= HelpDistance then
-                showsubtitle((Config.Language[Config.Local]['santa_distance_massage']), 2000)
+--         if GetEntityModel(Ped) == GetHashKey('a_c_deer') then
+--             local dist = #(pedCoords - GetEntityCoords(Ped))
+--             if dist <= HelpDistance then
+--                 showsubtitle((Config.Language[Config.Local]['santa_distance_massage']), 2000)
 
-                if dist <= 10.0 then
-                    showsubtitle((Config.Language[Config.Local]['has_found_deer']), 2000)
-                    if PlayerInSearch and HasUsedItem then
-                        DeleteNearBlip =true
-                        if DeerCount == 1 then
-                            DeerCount = 0
-                            PlayerInSearch = false
+--                 if dist <= 10.0 then
+--                     showsubtitle((Config.Language[Config.Local]['has_found_deer']), 2000)
+--                     if PlayerInSearch and HasUsedItem then
+--                         DeleteNearBlip =true
+--                         if DeerCount == 1 then
+--                             DeerCount = 0
+--                             PlayerInSearch = false
 
-                            local playerPos = GetEntityCoords(PlayerPedId(), false)
+--                             local playerPos = GetEntityCoords(PlayerPedId(), false)
 
-                            if DeleteNearBlip then
-                                for _, blip in ipairs(blips) do
-                                    local blipPos = GetBlipCoords(blip)
-                                    local distance = Vdist(playerPos.x, playerPos.y, playerPos.z, blipPos.x, blipPos.y, blipPos.z)
-                                    if distance < 10.0 then
-                                        local entity = GetBlipInfoIdEntityIndex(blip)
-                                        RemoveBlip(blip)
-                                        Wait(500)
-                                        RequestNamedPtfxAsset("scr_rcbarry1")
-                                        while not HasNamedPtfxAssetLoaded("scr_rcbarry1") do
-                                            Wait(1)
-                                        end
+--                             if DeleteNearBlip then
+--                                 for _, blip in ipairs(blips) do
+--                                     local blipPos = GetBlipCoords(blip)
+--                                     local distance = Vdist(playerPos.x, playerPos.y, playerPos.z, blipPos.x, blipPos.y, blipPos.z)
+--                                     if distance < 10.0 then
+--                                         local entity = GetBlipInfoIdEntityIndex(blip)
+--                                         RemoveBlip(blip)
+--                                         Wait(500)
+--                                         RequestNamedPtfxAsset("scr_rcbarry1")
+--                                         while not HasNamedPtfxAssetLoaded("scr_rcbarry1") do
+--                                             Wait(1)
+--                                         end
 
-                                        UseParticleFxAsset("scr_rcbarry1")
-                                        StartParticleFxLoopedOnEntity("scr_alien_teleport", Ped, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, false, false, false, false)
-                                        Wait(2000)
-                                        DeleteEntity(entity)
-                                        DeleteNearBlip = false
-                                        HasUsedItem = false
-                                        break
-                                    end
-                                end
-                            end
-                            ShowCustomScaleform()
-                            Wait(1000)
-                            TriggerServerEvent('GMD_Christmas:giveXmasSearchStocking')
-                        else 
+--                                         UseParticleFxAsset("scr_rcbarry1")
+--                                         StartParticleFxLoopedOnEntity("scr_alien_teleport", Ped, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, false, false, false, false)
+--                                         Wait(2000)
+--                                         DeleteEntity(entity)
+--                                         DeleteNearBlip = false
+--                                         HasUsedItem = false
+--                                         break
+--                                     end
+--                                 end
+--                             end
+--                             ShowCustomScaleform()
+--                             Wait(1000)
+--                             TriggerServerEvent('GMD_Christmas:giveXmasSearchStocking')
+--                         else 
 
-                            DeerCount = DeerCount - 1
+--                             DeerCount = DeerCount - 1
 
-                            local playerPos = GetEntityCoords(PlayerPedId(), false)
+--                             local playerPos = GetEntityCoords(PlayerPedId(), false)
 
-                            for _, blip in ipairs(blips) do
-                                local blipPos = GetBlipCoords(blip)
-                                local distance = Vdist(playerPos.x, playerPos.y, playerPos.z, blipPos.x, blipPos.y, blipPos.z)
-                                if DeleteNearBlip then
-                                    if distance < 10.0 then
-                                        local entity = GetBlipInfoIdEntityIndex(blip)
-                                        RemoveBlip(blip)
-                                        Wait(500)
-                                        RequestNamedPtfxAsset("scr_rcbarry1")
-                                        while not HasNamedPtfxAssetLoaded("scr_rcbarry1") do
-                                            Wait(1)
-                                        end
+--                             for _, blip in ipairs(blips) do
+--                                 local blipPos = GetBlipCoords(blip)
+--                                 local distance = Vdist(playerPos.x, playerPos.y, playerPos.z, blipPos.x, blipPos.y, blipPos.z)
+--                                 if DeleteNearBlip then
+--                                     if distance < 10.0 then
+--                                         local entity = GetBlipInfoIdEntityIndex(blip)
+--                                         RemoveBlip(blip)
+--                                         Wait(500)
+--                                         RequestNamedPtfxAsset("scr_rcbarry1")
+--                                         while not HasNamedPtfxAssetLoaded("scr_rcbarry1") do
+--                                             Wait(1)
+--                                         end
 
-                                        UseParticleFxAsset("scr_rcbarry1")
-                                        StartParticleFxLoopedOnEntity("scr_alien_teleport", Ped, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, false, false, false, false)
-                                        Wait(2000)
-                                        DeleteEntity(entity)
-                                        showsubtitle(Config.Language[Config.Locale]['santa_found_massage']:format(DeerCount), 2000)
-                                        Wait(2500)
-                                        DeleteNearBlip = false
-                                        HasUsedItem = false
-                                        break
-                                    end
-                                end
-                            end
-                        end
-                    end
-                    Wait(1000)
-                else
-                    Wait(500)
-                end
-                Wait(1000)
-            end
-        else
-            Wait(1000)
-        end
-    end
-end)
+--                                         UseParticleFxAsset("scr_rcbarry1")
+--                                         StartParticleFxLoopedOnEntity("scr_alien_teleport", Ped, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, false, false, false, false)
+--                                         Wait(2000)
+--                                         DeleteEntity(entity)
+--                                         showsubtitle(Config.Language[Config.Locale]['santa_found_massage']:format(DeerCount), 2000)
+--                                         Wait(2500)
+--                                         DeleteNearBlip = false
+--                                         HasUsedItem = false
+--                                         break
+--                                     end
+--                                 end
+--                             end
+--                         end
+--                     end
+--                     Wait(1000)
+--                 else
+--                     Wait(500)
+--                 end
+--                 Wait(1000)
+--             end
+--         else
+--             Wait(1000)
+--         end
+--     end
+-- end)
 
 -- Scaleform Deer Mission
 function ShowCustomScaleform()
@@ -351,13 +352,13 @@ end
 CreateThread(function()
     while true do
         Wait(5)
-
+        EnteredGiftRadius = false
         local pedCoords = GetEntityCoords(PlayerPedId())
         local Ped = ESX.Game.GetClosestPed(pedCoords)
-
         for k, v in pairs(GiftCoordsTbl) do
             local dist = #(pedCoords - vector3(v.x, v.y, v.z))
             if dist <= 5.0 then
+                EnteredGiftRadius = true
                 if IsControlJustReleased(0, 38) then
 
                     RequestModel(GetHashKey("a_f_m_prolhost_01"))
