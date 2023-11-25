@@ -55,10 +55,10 @@ end)
 ESX.RegisterUsableItem('santas_coffee', function(source)
     local xPlayer = ESX.GetPlayerFromId(source)
 	xPlayer.removeInventoryItem('santas_coffee', 1)
-
 	TriggerClientEvent('esx_status:add', source, 'thirst', 200000)
 	TriggerClientEvent('esx_basicneeds:onDrink', source)
 	xPlayer.showNotification((Config.Language[Config.Local]['santas_coffee']))
+    -- here can u add effects
 end)
 
 ESX.RegisterUsableItem('santas_wine', function(source)
@@ -68,4 +68,5 @@ ESX.RegisterUsableItem('santas_wine', function(source)
 	TriggerClientEvent('esx_status:add', source, 'thirst', 200000)
 	TriggerClientEvent('esx_basicneeds:onDrink', source)
 	xPlayer.showNotification((Config.Language[Config.Local]['santas_wine']))
+    -- here can u add effects
 end)
