@@ -1,7 +1,6 @@
 ESX = exports['es_extended']:getSharedObject()
 
 xSound = exports.xsound
-SantaClausSpawned = false
 Musicplay = false
 PlayerInSearch = false
 PlayerInGiftJob = false
@@ -25,17 +24,32 @@ local HelpDistance = 15
 local DeerFinished = false
 local HasUsedItem = false
 
-local availablePeds = {
-    "a_m_m_acult_01",
-    "a_m_o_acult_02",
-    "a_m_y_acult_01"
-}
+CreateThread(function()
+    SpawnSanta()
+end)
 
-AddEventHandler('onResourceStart', function(resource)
-    if GetCurrentResourceName() == resource then
-        xSound:Destroy("Xmas")
-        PlayXmasMusik()
-    end
+AddEventHandler('esx:onPlayerSpawn', function ()
+    ESX.TriggerServerCallback('GMD_Christmas:HasMissionFinished', function(HasFinished)
+        if HasFinished then
+            print("Hat fertig")
+            RequestAnimDict("rcmbarry")
+
+            while not HasAnimDictLoaded("rcmbarry") do
+                Wait(100)
+            end
+        
+            TaskPlayAnim(santa, "rcmbarry", "base", 8.0, 8.0, -1, 1, 0, false, false, false)
+        else
+            print("nicht fertig")
+            RequestAnimDict("random@drunk_driver_1")
+
+            while not HasAnimDictLoaded("random@drunk_driver_1") do
+                Wait(100)
+            end
+        
+            TaskPlayAnim(santa, "random@drunk_driver_1", "drunk_driver_stand_loop_dd1", 8.0, 8.0, -1, 1, 0, false, false, false)
+        end
+    end)
 end)
 
 -- Xmas Weather
@@ -56,45 +70,43 @@ function PlayXmasMusik()
     xSound:Distance("Xmas", Config.ChristmasMarketRadius)
 end
 
-CreateThread(function()
-    if not SantaClausSpawned then
-        local modelHash = Config.SantaClausModel
 
-        RequestModel(modelHash)
-        while not HasModelLoaded(modelHash) do
-            Wait(200)
-        end
 
-        RequestAnimDict("random@drunk_driver_1")
+function SpawnSanta()
+    PlayXmasMusik()
+    local modelHash = Config.SantaClausModel
 
-        while not HasAnimDictLoaded("random@drunk_driver_1") do
-            Wait(100)
-        end
-
-        local santa = CreatePed(5, modelHash, Config.SantaClausPosition, false, true)
-        SetEntityInvincible(santa, true)
-        SetEntityHeading(santa, Config.SantaClausHeading)
-        FreezeEntityPosition(santa, true)
-        SetPedCanBeTargetted(santa, false)
-        FreezeEntityPosition(santa, true)
-        SetEntityInvincible(santa, true)
-        SetBlockingOfNonTemporaryEvents(santa, true)
-        SetEveryoneIgnorePlayer(PlayerPedId(), true)
-        SetPedCanBeTargettedByPlayer(santa, PlayerPedId(), false)
-        SetPedCombatAttributes(santa, 46, true)
-        SetPedCombatAttributes(santa, 17, true)
-        SetPedCombatAttributes(santa, 5, true)
-        SetPedCombatAttributes(santa, 20, true)
-        SetPedCombatAttributes(santa, 52, true)
-        SetPedFleeAttributes(santa, 0, false)
-        SetPedFleeAttributes(santa, 128, false)
-        SetPedAccuracy(santa, 70)
-        SetPedDropsWeaponsWhenDead(santa, false)
-        TaskPlayAnim(santa, "random@drunk_driver_1", "drunk_driver_stand_loop_dd1", 8.0, 8.0, -1, 1, 0, false, false,
-            false)
-        SantaClausSpawned = true
+    RequestModel(modelHash)
+    while not HasModelLoaded(modelHash) do
+        Wait(200)
     end
-end)
+
+    -- RequestAnimDict("random@drunk_driver_1")
+
+    -- while not HasAnimDictLoaded("random@drunk_driver_1") do
+    --     Wait(100)
+    -- end
+
+    santa = CreatePed(5, modelHash, Config.SantaClausPosition, false, false)
+    SetEntityInvincible(santa, true)
+    SetEntityHeading(santa, Config.SantaClausHeading)
+    FreezeEntityPosition(santa, true)
+    SetPedCanBeTargetted(santa, false)
+    SetEntityInvincible(santa, true)
+    SetBlockingOfNonTemporaryEvents(santa, true)
+    SetEveryoneIgnorePlayer(PlayerPedId(), true)
+    SetPedCanBeTargettedByPlayer(santa, PlayerPedId(), false)
+    SetPedCombatAttributes(santa, 46, true)
+    SetPedCombatAttributes(santa, 17, true)
+    SetPedCombatAttributes(santa, 5, true)
+    SetPedCombatAttributes(santa, 20, true)
+    SetPedCombatAttributes(santa, 52, true)
+    SetPedFleeAttributes(santa, 0, false)
+    SetPedFleeAttributes(santa, 128, false)
+    SetPedAccuracy(santa, 70)
+    SetPedDropsWeaponsWhenDead(santa, false)
+    -- TaskPlayAnim(santa, "random@drunk_driver_1", "drunk_driver_stand_loop_dd1", 8.0, 8.0, -1, 1, 0, false, false, false)
+end
 
 CreateThread(function()
     while true do
@@ -195,6 +207,14 @@ CreateThread(function()
                             DeerCount = 0
                             PlayerInSearch = false
 
+                            RequestAnimDict("rcmbarry")
+
+                            while not HasAnimDictLoaded("rcmbarry") do
+                                Wait(100)
+                            end
+                        
+                            TaskPlayAnim(santa, "rcmbarry", "base", 8.0, 8.0, -1, 1, 0, false, false, false)
+
                             local playerPos = GetEntityCoords(PlayerPedId(), false)
 
                             if DeleteNearBlip then
@@ -246,7 +266,7 @@ CreateThread(function()
                                         StartParticleFxLoopedOnEntity("scr_alien_teleport", Ped, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, false, false, false, false)
                                         Wait(2000)
                                         DeleteEntity(entity)
-                                        showsubtitle(Config.Language[Config.Locale]['santa_found_massage']:format(DeerCount), 2000)
+                                        showsubtitle((Config.Language[Config.Local]['santa_found_massage']):format(DeerCount), 2000)
                                         Wait(2500)
                                         DeleteNearBlip = false
                                         HasUsedItem = false
@@ -291,9 +311,9 @@ function ShowCustomScaleform()
     end)
 
     local pedCoords = GetEntityCoords(PlayerPedId())
-    PlaySoundFrontend(-1, "HUD_AWARDS", "FLIGHT_SCHOOL_LESSON_PASSED", 1)
+    PlaySoundFrontend(-1, "FLIGHT_SCHOOL_LESSON_PASSED", "HUD_AWARDS", 1)
 
-    Wait(5000)
+    Wait(3000)
     SetScaleformMovieAsNoLongerNeeded(scaleformHandle)
     eventActive = false
 end
@@ -313,6 +333,10 @@ if Config.Debug then
     RegisterCommand("debugGift", function(source, args, rawCommand)
         GiftJob()
         PlayerInGiftJob = true
+    end, false)
+
+    RegisterCommand("debugScale", function(source, args, rawCommand)
+        ShowCustomScaleform()
     end, false)
 end
 
@@ -401,8 +425,30 @@ function GiftScense(v)
     playAnimGift("timetable@jimmy@doorknock@", "knockdoor_idle", 3000)
     Wait(4000)
     SetEntityCoords(player, v.x + PlayeroffsetX, v.y - PlayoffsetY, v.z - 1, 0.0, 0.0, 0.0, false)
-    local giftPed = CreatePed(4, GetHashKey("a_f_m_prolhost_01"), v.x, v.y, v.z - 1.0, heading, false,
-        true)
+    local giftPed = CreatePed(4, GetHashKey("a_f_m_prolhost_01"), v.x, v.y, v.z - 1.0, heading, false, true)
+
+    SetEntityInvincible(giftPed, true)
+    SetPedCanBeTargetted(giftPed, false)
+    SetEntityInvincible(giftPed, true)
+    SetBlockingOfNonTemporaryEvents(giftPed, true)
+    SetEveryoneIgnorePlayer(PlayerPedId(), true)
+    SetPedCanBeTargettedByPlayer(giftPed, PlayerPedId(), false)
+    SetPedCombatAttributes(giftPed, 46, true)
+    SetPedCombatAttributes(giftPed, 17, true)
+    SetPedCombatAttributes(giftPed, 5, true)
+    SetPedCombatAttributes(giftPed, 20, true)
+    SetPedCombatAttributes(giftPed, 52, true)
+    SetPedFleeAttributes(giftPed, 0, false)
+    SetPedFleeAttributes(giftPed, 128, false)
+    SetPedAccuracy(giftPed, 70)
+    SetPedDropsWeaponsWhenDead(giftPed, false)
+
+    SetPedStealthMovement(GetPlayerPed(-1),true,"")
+  
+    DisableControlAction(0,24,true) -- disable attack
+    DisableControlAction(0,25,true) -- disable aim
+
+
     TaskLookAtEntity(giftPed, player, -1, 0, 2, 1)
     TaskTurnPedToFaceEntity(giftPed, player, -1)
     Wait(500)
@@ -443,6 +489,23 @@ function GiftScense(v)
     Wait(500)
     ClearPedTasks(PlayerPedId())
     DeleteEntity(giftPed)
+
+    SetPedStealthMovement(GetPlayerPed(-1), false, "")
+    DisableControlAction(0, 21, false) -- disable sprint
+    DisableControlAction(0, 24, false) -- disable attack
+    DisableControlAction(0, 25, false) -- disable aim
+    DisableControlAction(0, 47, false) -- disable weapon
+    DisableControlAction(0, 58, false) -- disable weapon
+    DisableControlAction(0, 263, false) -- disable melee
+    DisableControlAction(0, 264, false) -- disable melee
+    DisableControlAction(0, 257, false) -- disable melee
+    DisableControlAction(0, 140, false) -- disable melee
+    DisableControlAction(0, 141, false) -- disable melee
+    DisableControlAction(0, 142, false) -- disable melee
+    DisableControlAction(0, 143, false) -- disable melee
+    DisableControlAction(0, 75, false) -- disable exit vehicle
+    DisableControlAction(27, 75, false) -- disable exit vehicle
+
     if GiftCount == 1 then
         GiftCount = 0
         for _, blipGift in ipairs(blipsGift) do
